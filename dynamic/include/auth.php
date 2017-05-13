@@ -18,7 +18,7 @@ class Authorization
 	public function addUser($username,$cleartextPasswd){
 		$encryptedPasswd = $this->encryptPassword($cleartextPasswd);
 		$atomicHandler = new AtomicFile();
-		$atomicHandler->atomicAttach(".htaccess", $username . ":" . $encryptedPasswd . "\n");
+		$atomicHandler->atomicModifyHtPasswdFile(".htusers", $username, $encryptedPasswd);
 	}
 }
 ?>
