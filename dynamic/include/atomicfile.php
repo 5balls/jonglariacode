@@ -22,28 +22,31 @@ class AtomicFile
 	}
 	public function atomicModifyHtPasswdFile($fileName, $userName, $encryptedPassword)
 	{
-		$fileHandler = fopen($fileName, "rw");
+		$fileHandler = fopen($fileName, "r+");
 		if(flock($fileHandler, LOCK_EX)){
 			$userExists = False;
 			$newFileContent = "";
 			$fileContentLines = explode("\n", fread($fileHandler, filesize($fileName)));
 			foreach ($fileContentLines as $fileContentLine)
 			{
-				echo "fileContentLine: \"" . $fileContentLine . "\"\n";
+				# Empty line (happens for last line break too):
+				if($fileContentLine=="") continue;
+				# Parse line in the style of "username:password"
 				[$currentUserName, $currentPassword] = explode(':', $fileContentLine);
-				echo "User: \"" . $currentUserName . "\"\n";
-				echo "Password: \"" . $currentPassword . "\"\n";
+				# See if user exists already
 				if($currentUserName==$userName){
+					# User matched line in our user file
 					$newFileContent .= $userName . ":" . $encryptedPassword . "\n";
 					$userExists = True;
 				}
 				else{
-					$newFileContent .= $fileContentLine;
+					# User did not match
+					$newFileContent .= $fileContentLine . "\n";
 				}
 
 			}
 			if($userExists == True){
-				fwrite($fileHandler, $newFileContent);
+				file_put_contents($fileName, $newFileContent);
 			}
 
 			flock($fileHandler, LOCK_UN);
