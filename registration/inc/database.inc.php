@@ -40,7 +40,7 @@ class Database
 
   public function escape_string($esc_string) // former db_escape
   {
-    $esc_string = mysqli_escape_string($esc_string);
+    $esc_string = mysqli_escape_string($this->db, $esc_string);
     return $esc_string;
   }
 
