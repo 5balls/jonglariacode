@@ -39,10 +39,11 @@ if ( isset($_POST['reg']) ) {
       && $DB->escape_string($_POST['prename']) != ""
       && $DB->escape_string($_POST['email']) != "") {
     $sql = "INSERT participants(";
-    $sql .= "surname, prename, email) VALUES (";
+    $sql .= "surname, prename, email, ip) VALUES (";
     $sql .= "'". $DB->escape_string($_POST['surname'])   ."', ";
     $sql .= "'". $DB->escape_string($_POST['prename'])   ."', ";
-    $sql .= "'". $DB->escape_string($_POST['email'])     ."');";
+    $sql .= "'". $DB->escape_string($_POST['email'])     ."',";
+    $sql .= "'". $_SERVER['REMOTE_ADDR']     ."');";
 
     $DB->query($sql);
 
@@ -74,7 +75,7 @@ else {
 ?>
 <div id='main'>
   <form action='registration.php' name='reg' method='post'>
-    <table align='center'>
+    <table align='center', class='registration'>
       <tr><td>Vorname</td><td><input type='text' name='prename' value='' maxlength='100' size='30' /></td></tr>
       <tr><td>Nachname</td><td ><input type='text' name='surname' value='' maxlength='100' size='30' /></td></tr>
       <tr><td>E-Mail</td><td ><input type='text' name='email' value='' maxlength='100' size='30' /></td></tr>

@@ -57,3 +57,17 @@ a:hover  {
 .center {
   text-align: center;
 }
+table.participants	{
+	font-size: 13px; 
+  width: 90%;
+  margin-left: 5%;
+  margin-right 5%;
+  border-collapse: collapse;
+}
+table.participants td { 
+  border: 2px solid #ddd;
+  padding: 5px;
+  text-align: left;
+} 
+.participants tr:nth-child(even) {background-color: #f2f2f2}
+.participants tr:hover {background-color: #ffaeae}

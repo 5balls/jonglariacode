@@ -18,5 +18,6 @@ CREATE TABLE IF NOT EXISTS `mexicon`.`participants` (
   `payed` BOOLEAN NOT NULL DEFAULT FALSE , 
   `regtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
   `arrivaltime` TIMESTAMP NULL DEFAULT NULL ,
+  `ip` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL , 
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_unicode_ci;
