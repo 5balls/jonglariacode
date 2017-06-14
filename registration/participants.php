@@ -27,6 +27,7 @@ echo "<tr>";
 echo "<td><b>ID</b></td>";
 echo "<td><b>Vorname</b></td>";
 echo "<td><b>Nachname</b></td>";
+echo "<td><b>Gezahlt</b></td>";
 echo "<td><b>IP</b></td>";
 echo "</tr>\n";
 $csv = fopen("participants.csv", "w");
@@ -37,6 +38,7 @@ while ($data = $DB->fetch_assoc($res)) {
   echo "<td>".$data['id']."</td>";
   echo "<td>".$data['prename']."</td>";
   echo "<td>".$data['surname']."</td>";
+  echo "<td>".$data['payed']."</td>";
   echo "<td>".$data['ip']."</td>";
   echo "</tr>\n";
   // csv file

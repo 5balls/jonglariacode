@@ -39,11 +39,12 @@ if ( isset($_POST['reg']) ) {
       && $DB->escape_string($_POST['prename']) != ""
       && $DB->escape_string($_POST['email']) != "") {
     $sql = "INSERT participants(";
-    $sql .= "surname, prename, email, ip) VALUES (";
+    $sql .= "surname, prename, email, ip, browser) VALUES (";
     $sql .= "'". $DB->escape_string($_POST['surname'])   ."', ";
     $sql .= "'". $DB->escape_string($_POST['prename'])   ."', ";
     $sql .= "'". $DB->escape_string($_POST['email'])     ."',";
-    $sql .= "'". $_SERVER['REMOTE_ADDR']     ."');";
+    $sql .= "'". $_SERVER['REMOTE_ADDR']     ."',";
+    $sql .= "'". $_SERVER['HTTP_USER_AGENT']     ."');";
 
     $DB->query($sql);
 
