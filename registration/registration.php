@@ -3,6 +3,7 @@
 include("config/config.php");
 include("inc/database.inc.php");
 include("inc/validateDate.inc.php");
+include("inc/getZip.inc.php");
 
 $DB = new Database("mexicon");  
 
@@ -44,10 +45,11 @@ if ( isset($_POST['reg']) ) {
       && $DB->escape_string($_POST['birthday']) != ""
       && $DB->escape_string($_POST['email']) != "") {
     $sql = "INSERT participants(";
-    $sql .= "surname, prename, birthday, email, ip, browser) VALUES (";
+    $sql .= "surname, prename, birthday, zip, email, ip, browser) VALUES (";
     $sql .= "'". $DB->escape_string($_POST['surname'])   ."', ";
     $sql .= "'". $DB->escape_string($_POST['prename'])   ."', ";
     $sql .= "'". $DB->escape_string($_POST['birthday'])     ."',";
+    $sql .= "'". getZip()     ."',";
     $sql .= "'". $DB->escape_string($_POST['email'])     ."',";
     $sql .= "'". $_SERVER['REMOTE_ADDR']     ."',";
     $sql .= "'". $_SERVER['HTTP_USER_AGENT']     ."');";
