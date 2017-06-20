@@ -12,7 +12,7 @@ $DB = new Database("mexicon");
      'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='de' lang='de'>
 <head>
-<meta http-equiv='content-type' content='text/html; charset=iso-8859-1'/>
+<meta http-equiv='content-type' content='text/html; charset=<?php echo CHARSET; ?>'/>
 <title>Jonglaria</title>
 <link rel='stylesheet' type='text/css' href='../registration.css' />
 </head>
@@ -21,37 +21,48 @@ $DB = new Database("mexicon");
   <h1>6. Tübinger Jonglierconvention</h1>
   <h2>Teilnehmerliste [<a href='./participants.csv'>csv</a>]</h2>
 </div>
+Legende: <br />
+&euro; - gezahlt | &#9889; - Alter bei Beginn der Convention | &#9972; - Stocherkahn Interesse
+<br />
+<br />
 <?php 
 
-echo "<table class='participants'>\n";
-echo "<tr>";
+echo "<form action='editp.php' name='update' method='post'>\n";
+echo "  <table class='participants'>\n";
+echo "    <tr>";
+echo "<td><b>&#9745;</b></td>";
 echo "<td><b>ID</b></td>";
 echo "<td><b>Vorname</b></td>";
 echo "<td><b>Nachname</b></td>";
-echo "<td><b>Alter</b></td>";
+echo "<td><b>&#9889;</b></td>";
 echo "<td><b>&euro;</b></td>";
-echo "<td><b>&#8224;</b></td>";
-echo "<td><b>ZIP</b></td>";
-echo "<td><b>IP</b></td>";
-echo "</tr>\n";
+echo "<td><b>&#9972;</b></td>";
+//echo "<td><b>ZIP</b></td>";
+//echo "<td><b>IP</b></td>";
+echo "    </tr>\n";
 $csv = fopen("participants.csv", "w");
-fwrite($csv, "id, prename, surname, birthday, zip, email, payed, boat, regtime, arrivaltime, ip, browser, email-registered, email-ticket, active");
+fwrite($csv, "id,prename,surname,birthday,zip,email,payed,boat,regtime,arrivaltime,ip,browser,email_registered,email_ticket,active");
 fwrite($csv, "\n");
-$res = $DB->query("SELECT * FROM `participants`;");
+$res = $DB->query("SELECT * FROM `participants` WHERE `active` = 1;");
 while ($data = $DB->fetch_assoc($res)) {
   // table
-  echo "<tr>";
+  echo "    <tr>";
+  echo "<td><input type='checkbox' name='id_list[]' value='".$data['id']."'></td>";
   echo "<td>".$data['id']."</td>";
   echo "<td>".$data['prename']."</td>";
   echo "<td>".$data['surname']."</td>";
   echo "<td>".getAgeConvention($data['birthday'])."</td>";
-  if ($data['payed']) echo "<td>&#x2714;</td>";
-  else echo "<td>&#x2718;</td>";
+  if ($data['payed'])
+    //echo "<td><a href='./editp.php?id=".$data['id']."&payed=false'>&#x2714;</a></td>";
+    echo "<td>&#x2714;</td>";
+  else 
+    //echo "<td><a href='./editp.php?id=".$data['id']."&payed=true'>&#x2718;</a></td>";
+    echo "<td>&#x2718;</td>";
   if ($data['boat']) echo "<td>&#x2714;</td>";
   else echo "<td>&#x2718;</td>";
-  echo "<td>".$data['zip']."</td>";
-  echo "<td>".$data['ip']."</td>";
-  echo "</tr>\n";
+  //echo "<td>".$data['zip']."</td>";
+  //echo "<td>".$data['ip']."</td>";
+  echo "    </tr>\n";
   // csv file
   fwrite($csv, $data['id']);
   fwrite($csv, ",");
@@ -77,14 +88,26 @@ while ($data = $DB->fetch_assoc($res)) {
   fwrite($csv, ",");
   fwrite($csv, $data['browser']);
   fwrite($csv, ",");
-  fwrite($csv, $data['email-registered']);
+  fwrite($csv, $data['email_registered']);
   fwrite($csv, ",");
-  fwrite($csv, $data['email-ticket']);
+  fwrite($csv, $data['email_ticket']);
   fwrite($csv, ",");
   fwrite($csv, $data['active']);
   fwrite($csv, "\n");
 }
 fclose($csv);
-echo "</table>";
-
+echo "  </table>\n";
 ?>
+<div align='left' style='margin-left:5%;'>
+  <br />
+  <button name='update' type='submit' value='payed' class='button'>Selektion hat bezahlt</button>
+  <br /><br />
+  <button name='update' type='submit' value='notpayed' class='button'>Selektion hat <b>nicht</b> bezahlt</button>
+  <br /><br />
+  <button name='update' type='submit' value='delete' class='button' onclick='return confirm(\"Selektion wirklich löschen?\")'>
+    Selektion <b>löschen</b>
+  </button>
+</div>
+</form>
+</body>
+</html>

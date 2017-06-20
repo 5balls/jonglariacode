@@ -1,7 +1,12 @@
 <?php //config.php
 
-// ERROR REPORTING: 0=off, E_ALL=report all errors
+// ############ ERROR REPORTING ############ //
+// 0=off // E_ALL=report all errors
 error_reporting(E_ALL);
+
+// ############ CHARSET ############ //
+// utf-8 // iso-8859-1
+define('CHARSET', 'utf-8');
 
 // ############ DATABASE CONFIG ############ //
 define('DB_HOST', 'localhost');

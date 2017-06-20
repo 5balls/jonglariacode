@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS `mexicon`.`participants` (
   `arrivaltime` TIMESTAMP NULL DEFAULT NULL ,
   `ip` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL , 
   `browser` VARCHAR(150) COLLATE utf8_unicode_ci NOT NULL , 
-  `email-registered` BOOLEAN NOT NULL DEFAULT FALSE , 
-  `email-ticket` BOOLEAN NOT NULL DEFAULT FALSE , 
+  `email_registered` BOOLEAN NOT NULL DEFAULT FALSE , 
+  `email_ticket` BOOLEAN NOT NULL DEFAULT FALSE , 
   `active` BOOLEAN NOT NULL DEFAULT TRUE , 
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_unicode_ci;
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `mexicon`.`participants` (
 
 CREATE TABLE IF NOT EXISTS `mexicon`.`galashow` ( 
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT , 
-  `participant-id` INT(10) UNSIGNED NULL , 
+  `participant_id` INT(10) UNSIGNED NULL , 
   `surname` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL , 
   `prename` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL , 
   `birthday` DATE COLLATE utf8_unicode_ci NOT NULL , 
@@ -47,8 +47,8 @@ CREATE TABLE IF NOT EXISTS `mexicon`.`galashow` (
   `arrivaltime` TIMESTAMP NULL DEFAULT NULL ,
   `ip` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL , 
   `browser` VARCHAR(150) COLLATE utf8_unicode_ci NOT NULL , 
-  `email-registered` BOOLEAN NOT NULL DEFAULT FALSE , 
-  `email-ticket` BOOLEAN NOT NULL DEFAULT FALSE , 
+  `email_registered` BOOLEAN NOT NULL DEFAULT FALSE , 
+  `email_ticket` BOOLEAN NOT NULL DEFAULT FALSE , 
   `active` BOOLEAN NOT NULL DEFAULT TRUE , 
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_unicode_ci;
