@@ -47,7 +47,7 @@ $res = $DB->query("SELECT * FROM `participants` WHERE `active` = 1;");
 while ($data = $DB->fetch_assoc($res)) {
   // table
   echo "    <tr>";
-  echo "<td><input type='checkbox' name='id_list[]' value='".$data['id']."'></td>";
+  echo "<td><input type='checkbox' name='id_list[]' value='".$data['id']."' /></td>";
   echo "<td>".$data['id']."</td>";
   echo "<td>".$data['prename']."</td>";
   echo "<td>".$data['surname']."</td>";

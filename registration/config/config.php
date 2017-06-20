@@ -8,6 +8,10 @@ error_reporting(E_ALL);
 // utf-8 // iso-8859-1
 define('CHARSET', 'utf-8');
 
+// ############ SLOTS ############ //
+// total number of free slots to register
+define('SLOTS', '180');
+
 // ############ DATABASE CONFIG ############ //
 define('DB_HOST', 'localhost');
 define('DB_USER', 'mexicon');
