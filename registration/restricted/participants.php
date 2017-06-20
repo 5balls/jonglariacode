@@ -1,7 +1,7 @@
 <?php
 
-include("config/config.php");
-include("inc/database.inc.php");
+include("../config/config.php");
+include("../inc/database.inc.php");
 
 $DB = new Database("mexicon");  
 
@@ -13,7 +13,7 @@ $DB = new Database("mexicon");
 <head>
 <meta http-equiv='content-type' content='text/html; charset=iso-8859-1'/>
 <title>Jonglaria</title>
-<link rel='stylesheet' type='text/css' href='./registration.css' />
+<link rel='stylesheet' type='text/css' href='../registration.css' />
 </head>
 <body>
 <div id='header'>
@@ -38,7 +38,8 @@ while ($data = $DB->fetch_assoc($res)) {
   echo "<td>".$data['id']."</td>";
   echo "<td>".$data['prename']."</td>";
   echo "<td>".$data['surname']."</td>";
-  echo "<td>".$data['payed']."</td>";
+  if ($data['payed']) echo "<td>&#x2714;</td>";
+  else echo "<td>&#x2718;</td>";
   echo "<td>".$data['ip']."</td>";
   echo "</tr>\n";
   // csv file
