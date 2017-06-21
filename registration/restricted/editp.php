@@ -10,13 +10,18 @@ if (isset($_GET['id'])) {
   $res = $DB->query("SELECT * FROM `participants` WHERE `id` = '".$_GET['id']."';");
   $data = $DB->fetch_assoc($res);
   if ($_GET['payed']) {
-    if ($_GET['payed'] == "true")
+    if ($_GET['payed'] == "true") {
       $sql = "UPDATE `participants` SET `payed` = '1' WHERE `id` = '".$_GET['id']."';";
-    else if ($_GET['payed'] == "false")
+      $DB->query($sql);
+      $sql = "UPDATE `galashow` SET `payed` = '1' WHERE `participant_id` = '".$_GET['id']."';";
+      $DB->query($sql);
+    }
+    else if ($_GET['payed'] == "false") {
       $sql = "UPDATE `participants` SET `payed` = '0' WHERE `id` = '".$_GET['id']."';";
-    else
-      $sql = NULL;
-    if (!is_null($sql)) $DB->query($sql);
+      $DB->query($sql);
+      $sql = "UPDATE `galashow` SET `payed` = '0' WHERE `participant_id` = '".$_GET['id']."';";
+      $DB->query($sql);
+    }
   }
 }
 else if (isset($_POST['update'])) {
@@ -26,6 +31,8 @@ else if (isset($_POST['update'])) {
       foreach($_POST['id_list'] as $id) {
         $sql = "UPDATE `participants` SET `payed` = '1' WHERE `id` = '".$id."';";
         $DB->query($sql);
+        $sql = "UPDATE `galashow` SET `payed` = '1' WHERE `participant_id` = '".$id."';";
+        $DB->query($sql);
       }
     }
   }
@@ -34,6 +41,8 @@ else if (isset($_POST['update'])) {
     if(!empty($_POST['id_list'])) {
       foreach($_POST['id_list'] as $id) {
         $sql = "UPDATE `participants` SET `payed` = '0' WHERE `id` = '".$id."';";
+        $DB->query($sql);
+        $sql = "UPDATE `galashow` SET `payed` = '0' WHERE `participant_id` = '".$id."';";
         $DB->query($sql);
       }
     }

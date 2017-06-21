@@ -18,52 +18,52 @@ $DB = new Database("mexicon");
 </head>
 <body>
 <div id='header'>
-  <h1>6. Tübinger Jonglierconvention</h1>
-  <h2>Teilnehmerliste [<a href='./participants.csv'>csv</a>]</h2>
+  <h1>Galashow der 6. Tübinger Jonglierconvention</h1>
+  <h2>Ticketinhaber [<a href='./galashow.csv'>csv</a>]</h2>
 </div>
-&euro; - gezahlt | &#9889; - Alter bei Beginn der Convention | &#9972; - Stocherkahn Interesse
+&euro; - gezahlt | CID - Convention ID, bei Conventiongängern
 <br />
 <br />
 <?php 
 
-echo "<form action='editp.php' name='update' method='post'>\n";
+echo "<form action='editg.php' name='update' method='post'>\n";
 echo "  <table class='datatable'>\n";
 echo "    <tr>";
 echo "<td><b>&#9745;</b></td>";
 echo "<td><b>ID</b></td>";
+echo "<td><b>CID</b></td>";
 echo "<td><b>Vorname</b></td>";
 echo "<td><b>Nachname</b></td>";
-echo "<td><b>&#9889;</b></td>";
 echo "<td><b>&euro;</b></td>";
-echo "<td><b>&#9972;</b></td>";
 //echo "<td><b>ZIP</b></td>";
 //echo "<td><b>IP</b></td>";
 echo "    </tr>\n";
-$csv = fopen("participants.csv", "w");
-fwrite($csv, "id,prename,surname,birthday,zip,email,payed,boat,regtime,arrivaltime,ip,browser,email_registered,email_ticket,active");
+$csv = fopen("galashow.csv", "w");
+fwrite($csv, "id,participant_id,prename,surname,birthday,zip,email,payed,regtime,arrivaltime,ip,browser,email_registered,email_ticket,active");
 fwrite($csv, "\n");
-$res = $DB->query("SELECT * FROM `participants` WHERE `active` = 1;");
+$res = $DB->query("SELECT * FROM `galashow` WHERE `active` = 1;");
 while ($data = $DB->fetch_assoc($res)) {
   // table
   echo "    <tr>";
   echo "<td><input type='checkbox' name='id_list[]' value='".$data['id']."' /></td>";
   echo "<td>".$data['id']."</td>";
+  if (!is_null($data['participant_id'])) echo "<td>".$data['participant_id']."</td>";
+  else echo "<td>&#x2718;</td>";
   echo "<td>".$data['prename']."</td>";
   echo "<td>".$data['surname']."</td>";
-  echo "<td>".getAgeConvention($data['birthday'])."</td>";
   if ($data['payed'])
-    //echo "<td><a href='./editp.php?id=".$data['id']."&payed=false'>&#x2714;</a></td>";
+    //echo "<td><a href='./editg.php?id=".$data['id']."&payed=false'>&#x2714;</a></td>";
     echo "<td>&#x2714;</td>";
   else 
-    //echo "<td><a href='./editp.php?id=".$data['id']."&payed=true'>&#x2718;</a></td>";
+    //echo "<td><a href='./editg.php?id=".$data['id']."&payed=true'>&#x2718;</a></td>";
     echo "<td>&#x2718;</td>";
-  if ($data['boat']) echo "<td>&#x2714;</td>";
-  else echo "<td>&#x2718;</td>";
   //echo "<td>".$data['zip']."</td>";
   //echo "<td>".$data['ip']."</td>";
   echo "    </tr>\n";
   // csv file
   fwrite($csv, $data['id']);
+  fwrite($csv, ",");
+  fwrite($csv, $data['participant_id']);
   fwrite($csv, ",");
   fwrite($csv, $data['prename']);
   fwrite($csv, ",");
@@ -76,8 +76,6 @@ while ($data = $DB->fetch_assoc($res)) {
   fwrite($csv, $data['email']);
   fwrite($csv, ",");
   fwrite($csv, $data['payed']);
-  fwrite($csv, ",");
-  fwrite($csv, $data['boat']);
   fwrite($csv, ",");
   fwrite($csv, $data['regtime']);
   fwrite($csv, ",");

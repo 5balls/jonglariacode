@@ -1,0 +1,83 @@
+<?php
+
+include("../config/config.php");
+include("../inc/database.inc.php");
+include("../inc/getAge.inc.php");
+
+$DB = new Database("mexicon");  
+
+if (isset($_GET['id'])) {
+  $res = $DB->query("SELECT * FROM `galashow` WHERE `id` = '".$_GET['id']."';");
+  $data = $DB->fetch_assoc($res);
+  if ($_GET['payed']) {
+    if ($_GET['payed'] == "true") {
+      if (!is_null($data['participant_id'])) {
+        $sql = "UPDATE `participants` SET `payed` = '1' WHERE `id` = '".$data['participant_id']."';";
+        $DB->query($sql);
+      }
+      $sql = "UPDATE `galashow` SET `payed` = '1' WHERE `id` = '".$_GET['id']."';";
+      $DB->query($sql);
+    }
+    else if ($_GET['payed'] == "false") {
+      if (!is_null($data['participant_id'])) {
+        $sql = "UPDATE `participants` SET `payed` = '0' WHERE `id` = '".$data['participant_id']."';";
+        $DB->query($sql);
+      }
+      $sql = "UPDATE `galashow` SET `payed` = '0' WHERE `id` = '".$_GET['id']."';";
+      $DB->query($sql);
+    }
+  }
+}
+else if (isset($_POST['update'])) {
+  // selection has payed
+  if ($_POST['update'] == 'payed') {
+    if(!empty($_POST['id_list'])) {
+      foreach($_POST['id_list'] as $id) {
+        $res = $DB->query("SELECT * FROM `galashow` WHERE `id` = '".$id."';");
+        $data = $DB->fetch_assoc($res);
+        if (!is_null($data['participant_id'])) {
+          $sql = "UPDATE `participants` SET `payed` = '1' WHERE `id` = '".$data['participant_id']."';";
+          $DB->query($sql);
+        }
+        $sql = "UPDATE `galashow` SET `payed` = '1' WHERE `id` = '".$id."';";
+        $DB->query($sql);
+      }
+    }
+  }
+  // selection has *not* payed
+  if ($_POST['update'] == 'notpayed') {
+    if(!empty($_POST['id_list'])) {
+      foreach($_POST['id_list'] as $id) {
+        $res = $DB->query("SELECT * FROM `galashow` WHERE `id` = '".$id."';");
+        $data = $DB->fetch_assoc($res);
+        if (!is_null($data['participant_id'])) {
+          $sql = "UPDATE `participants` SET `payed` = '0' WHERE `id` = '".$data['participant_id']."';";
+          $DB->query($sql);
+        }
+        $sql = "UPDATE `galashow` SET `payed` = '0' WHERE `id` = '".$id."';";
+        $DB->query($sql);
+      }
+    }
+  }
+  // delete selection 
+  if ($_POST['update'] == 'delete') {
+    if(!empty($_POST['id_list'])) {
+      foreach($_POST['id_list'] as $id) {
+        $res = $DB->query("SELECT * FROM `galashow` WHERE `id` = '".$id."';");
+        $data = $DB->fetch_assoc($res);
+        if (!is_null($data['participant_id'])) {
+          $sql = "DELETE FROM `participants` WHERE `id` = '".$data['participant_id']."';";
+          $DB->query($sql);
+        }
+        $sql = "DELETE FROM `galashow` WHERE `id` = '".$id."';";
+        $DB->query($sql);
+      }
+    }
+  }
+}
+
+$redirect_page = 'galashow.php';
+header('Location: ' .$redirect_page);
+exit();
+
+?>

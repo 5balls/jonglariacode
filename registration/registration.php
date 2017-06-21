@@ -19,7 +19,7 @@ $numfree = SLOTS - $numreg;
 <head>
 <meta http-equiv='content-type' content='text/html; charset=<?php echo CHARSET; ?>'/>
 <title>Jonglaria</title>
-<link rel='stylesheet' type='text/css' href='./registration.css' />
+<link rel='stylesheet' type='text/css' href='./style.css' />
 </head>
 <body>
 <div id='header'>
