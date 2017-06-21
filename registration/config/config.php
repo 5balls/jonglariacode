@@ -9,8 +9,9 @@ error_reporting(E_ALL);
 define('CHARSET', 'utf-8');
 
 // ############ SLOTS ############ //
-// total number of free slots to register
-define('SLOTS', '180');
+// total number of tickets
+define('SLOTS', '180'); // mexicon convention
+define('GALASLOTS', '700'); // gala show
 
 // ############ DATABASE CONFIG ############ //
 define('DB_HOST', 'localhost');
