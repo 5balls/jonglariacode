@@ -34,21 +34,24 @@ $numfree = SLOTS - $numreg;
 echo "<form action='editp.php' name='update' method='post'>\n";
 echo "  <table class='datatable'>\n";
 echo "    <tr>";
-echo "<td><b>&#9745;</b></td>";
-echo "<td><b>ID</b></td>";
-echo "<td><b>Vorname</b></td>";
-echo "<td><b>Nachname</b></td>";
-echo "<td><b>&#9889;</b></td>";
-echo "<td><b>&euro;</b></td>";
-echo "<td><b>&#9972;</b></td>";
-echo "<td><b>&#9977;</b></td>";
+echo "<td><b><a href='".$_SERVER['PHP_SELF']."'>&#9745;</a></b></td>";
+echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=id'>ID</a></b></td>";
+echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=prename'>Vorname</a></b></td>";
+echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=surname'>Nachname</a></b></td>";
+echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=birthday'>&#9889;</a></b></td>";
+echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=payed'>&euro;</a></b></td>";
+echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=boat'>&#9972;</a></b></td>";
+echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=arrivaltime'>&#9977;</a></b></td>";
 //echo "<td><b>ZIP</b></td>";
 //echo "<td><b>IP</b></td>";
 echo "    </tr>\n";
 $csv = fopen("participants.csv", "w");
 fwrite($csv, "id,prename,surname,birthday,zip,email,payed,boat,regtime,arrivaltime,ip,browser,email_registered,email_ticket,active");
 fwrite($csv, "\n");
-$res = $DB->query("SELECT * FROM `participants` WHERE `active` = 1;");
+if (isset($_GET['orderby'])) 
+  $res = $DB->query("SELECT * FROM `participants` WHERE `active` = 1 ORDER BY `".$DB->escape_string($_GET['orderby'])."` ASC;");
+else
+  $res = $DB->query("SELECT * FROM `participants` WHERE `active` = 1 ORDER BY `regtime` ASC, `surname` ASC, `prename` ASC;");
 while ($data = $DB->fetch_assoc($res)) {
   // table
   echo "    <tr>";
@@ -111,10 +114,12 @@ echo "  </table>\n";
   <br /><br />
   <button name='update' type='submit' value='arrived' class='button'>Selektion ist angekommen</button>
   <br /><br />
+  <br />
   <button name='update' type='submit' value='notpayed' class='button'>Selektion hat <b>nicht</b> bezahlt</button>
   <br /><br />
   <button name='update' type='submit' value='notarrived' class='button'>Selektion ist <b>nicht</b> angekommen</button>
   <br /><br />
+  <br />
   <button name='update' type='submit' value='delete' class='button' onclick='return confirm(\"Selektion wirklich löschen?\")'>
     Selektion <b>löschen</b>
   </button>

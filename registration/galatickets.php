@@ -66,7 +66,7 @@ if ( isset($_POST['reg']) ) {
     Dein Ticket für die Galashow ist reserviert.
     <br />
     <br />
-    <a href='./galatickets.php'>Zum Ticketformular</a>
+    <a href='<?php echo $_SERVER['PHP_SELF'] ?>'>Zum Ticketformular</a>
   </div>
 </div>
 </body>
@@ -82,7 +82,8 @@ if ( isset($_POST['reg']) ) {
       && $DB->escape_string($_POST['surname']) != ""
       && $DB->escape_string($_POST['prename']) != ""
       && $DB->escape_string($_POST['birthday']) != ""
-      && $DB->escape_string($_POST['email']) != "") {
+      && $DB->escape_string($_POST['email']) != ""
+      && filter_var($DB->escape_string($_POST['email']), FILTER_VALIDATE_EMAIL)) {
     // galashow table
     $sql = "INSERT galashow(";
     $sql .= "surname, prename, birthday, zip, email, ip, browser) VALUES (";
@@ -102,7 +103,7 @@ if ( isset($_POST['reg']) ) {
     Dein Ticket für die Galashow ist reserviert.
     <br />
     <br />
-    <a href='./galatickets.php'>Zum Ticketformular</a>
+    <a href='<?php echo $_SERVER['PHP_SELF'] ?>'>Zum Ticketformular</a>
   </div>
 </div>
 <?php

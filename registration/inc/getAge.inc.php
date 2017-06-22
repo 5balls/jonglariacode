@@ -10,4 +10,9 @@ function getAgeConvention($birthday)
   return date_diff(date_create($birthday), date_create('2017-09-15'))->y;
 }
 
+function getAgeGala($birthday)
+{
+  return date_diff(date_create($birthday), date_create('2017-09-16'))->y;
+}
+
 ?>

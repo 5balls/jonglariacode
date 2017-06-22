@@ -71,7 +71,7 @@ if ( isset($_POST['reg']) ) {
     Hinweis: Das Conventionticket ist gleichzeitig auch ein Ticket für die Galashow.
     <br />
     <br />
-    <a href='.'>Zum Registrierungsformular</a>
+    <a href='<?php echo $_SERVER['PHP_SELF'] ?>'>Zum Registrierungsformular</a>
   </div>
 </div>
 </body>
@@ -87,7 +87,8 @@ if ( isset($_POST['reg']) ) {
       && $DB->escape_string($_POST['surname']) != ""
       && $DB->escape_string($_POST['prename']) != ""
       && $DB->escape_string($_POST['birthday']) != ""
-      && $DB->escape_string($_POST['email']) != "") {
+      && $DB->escape_string($_POST['email']) != ""
+      && filter_var($DB->escape_string($_POST['email']), FILTER_VALIDATE_EMAIL)) {
     // participants table
     $sql = "INSERT participants(";
     $sql .= "surname, prename, birthday, zip, email, boat, ip, browser) VALUES (";
@@ -131,7 +132,7 @@ if ( isset($_POST['reg']) ) {
     Hinweis: Das Conventionticket ist gleichzeitig auch ein Ticket für die Galashow.
     <br />
     <br />
-    <a href='.'>Zum Registrierungsformular</a>
+    <a href='<?php echo $_SERVER['PHP_SELF'] ?>'>Zum Registrierungsformular</a>
   </div>
 </div>
 <?php
