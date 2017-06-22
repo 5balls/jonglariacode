@@ -56,6 +56,9 @@ if ( isset($_POST['reg']) ) {
       $new = false;
       $sql = "UPDATE `galashow` SET `active` = '1' WHERE `id` = '".$data['id']."';";
       $DB->query($sql);
+      $datetimenow = new DateTime(date("Y-m-d H:i:s"), new DateTimeZone('UTC')); 
+      $sql = "UPDATE `galashow` SET `regtime` = '".$datetimenow->format("Y-m-d H:i:s")."' WHERE `id` = '".$data['id']."';";
+      $DB->query($sql);
 
 ?>
 <div id='main'>

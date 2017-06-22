@@ -58,6 +58,11 @@ if ( isset($_POST['reg']) ) {
       $DB->query($sql);
       $sql = "UPDATE `galashow` SET `active` = '1' WHERE `participant_id` = '".$data['id']."';";
       $DB->query($sql);
+      $datetimenow = new DateTime(date("Y-m-d H:i:s"), new DateTimeZone('UTC')); 
+      $sql = "UPDATE `participants` SET `regtime` = '".$datetimenow->format("Y-m-d H:i:s")."' WHERE `id` = '".$data['id']."';";
+      $DB->query($sql);
+      $sql = "UPDATE `galashow` SET `regtime` = '".$datetimenow->format("Y-m-d H:i:s")."' WHERE `participant_id` = '".$data['id']."';";
+      $DB->query($sql);
 
 ?>
 <div id='main'>

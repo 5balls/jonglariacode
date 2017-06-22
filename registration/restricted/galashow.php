@@ -6,6 +6,10 @@ include("../inc/getAge.inc.php");
 
 $DB = new Database("mexicon");  
 
+$res = $DB->query("SELECT * FROM `galashow` WHERE `active` = 1;");
+$numreg = $DB->num_rows($res);
+$numfree = GALASLOTS - $numreg;
+
 ?>
 <!DOCTYPE html 
      PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'
@@ -22,8 +26,9 @@ $DB = new Database("mexicon");
   <h2>Ticketinhaber [<a href='./galashow.csv'>csv</a>]</h2>
 </div>
 &euro; - gezahlt | CID - Convention ID, bei Conventiongängern
-<br />
-<br />
+<br /> <br />
+&#35; <?php echo $numreg; ?>
+<br /> <br />
 <?php 
 
 echo "<form action='editg.php' name='update' method='post'>\n";
@@ -35,6 +40,7 @@ echo "<td><b>CID</b></td>";
 echo "<td><b>Vorname</b></td>";
 echo "<td><b>Nachname</b></td>";
 echo "<td><b>&euro;</b></td>";
+echo "<td><b>&#9977;</b></td>";
 //echo "<td><b>ZIP</b></td>";
 //echo "<td><b>IP</b></td>";
 echo "    </tr>\n";
@@ -57,6 +63,8 @@ while ($data = $DB->fetch_assoc($res)) {
   else 
     //echo "<td><a href='./editg.php?id=".$data['id']."&payed=true'>&#x2718;</a></td>";
     echo "<td>&#x2718;</td>";
+  if (!is_null($data['arrivaltime'])) echo "<td>&#x2714;</td>";
+  else echo "<td>&#x2718;</td>";
   //echo "<td>".$data['zip']."</td>";
   //echo "<td>".$data['ip']."</td>";
   echo "    </tr>\n";
@@ -99,7 +107,11 @@ echo "  </table>\n";
   <br />
   <button name='update' type='submit' value='payed' class='button'>Selektion hat bezahlt</button>
   <br /><br />
+  <button name='update' type='submit' value='arrived' class='button'>Selektion ist angekommen</button>
+  <br /><br />
   <button name='update' type='submit' value='notpayed' class='button'>Selektion hat <b>nicht</b> bezahlt</button>
+  <br /><br />
+  <button name='update' type='submit' value='notarrived' class='button'>Selektion ist <b>nicht</b> angekommen</button>
   <br /><br />
   <button name='update' type='submit' value='delete' class='button' onclick='return confirm(\"Selektion wirklich löschen?\")'>
     Selektion <b>löschen</b>

@@ -44,8 +44,22 @@ else if (isset($_POST['update'])) {
       }
     }
   }
+  // selection has arrived
+  if ($_POST['update'] == 'arrived') {
+    if(!empty($_POST['id_list'])) {
+      foreach($_POST['id_list'] as $id) {
+        $res = $DB->query("SELECT * FROM `galashow` WHERE `id` = '".$id."';");
+        $data = $DB->fetch_assoc($res);
+        $datetimenow = new DateTime(date("Y-m-d H:i:s"), new DateTimeZone('UTC')); 
+        $sql = "UPDATE `participants` SET `arrivaltime` = '".$datetimenow->format("Y-m-d H:i:s")."' WHERE `id` = '".$data['participant_id']."';";
+        $DB->query($sql);
+        $sql = "UPDATE `galashow` SET `arrivaltime` = '".$datetimenow->format("Y-m-d H:i:s")."' WHERE `id` = '".$id."';";
+        $DB->query($sql);
+      }
+    }
+  }
   // selection has *not* payed
-  if ($_POST['update'] == 'notpayed') {
+  else if ($_POST['update'] == 'notpayed') {
     if(!empty($_POST['id_list'])) {
       foreach($_POST['id_list'] as $id) {
         $res = $DB->query("SELECT * FROM `galashow` WHERE `id` = '".$id."';");
@@ -59,8 +73,22 @@ else if (isset($_POST['update'])) {
       }
     }
   }
+  // selection has not arrived
+  if ($_POST['update'] == 'notarrived') {
+    if(!empty($_POST['id_list'])) {
+      foreach($_POST['id_list'] as $id) {
+        $res = $DB->query("SELECT * FROM `galashow` WHERE `id` = '".$id."';");
+        $data = $DB->fetch_assoc($res);
+        $datetimenow = new DateTime(date("Y-m-d H:i:s"), new DateTimeZone('UTC')); 
+        $sql = "UPDATE `participants` SET `arrivaltime` = NULL WHERE `id` = '".$data['participant_id']."';";
+        $DB->query($sql);
+        $sql = "UPDATE `galashow` SET `arrivaltime` = NULL WHERE `id` = '".$id."';";
+        $DB->query($sql);
+      }
+    }
+  }
   // delete selection 
-  if ($_POST['update'] == 'delete') {
+  else if ($_POST['update'] == 'delete') {
     if(!empty($_POST['id_list'])) {
       foreach($_POST['id_list'] as $id) {
         $res = $DB->query("SELECT * FROM `galashow` WHERE `id` = '".$id."';");
