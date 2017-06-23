@@ -83,3 +83,9 @@ table.datatable td {
   color:#000000; 
   text-decoration:underline;
 }
+.captcha {
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  background: transparent;
+}

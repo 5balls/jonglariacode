@@ -1,4 +1,6 @@
-<?php
+<?php // registration.php
+
+session_start(); 
 
 include("config/config.php");
 include("inc/database.inc.php");
@@ -63,67 +65,53 @@ if ( isset($_POST['reg']) ) {
       $DB->query($sql);
       $sql = "UPDATE `galashow` SET `regtime` = '".$datetimenow->format("Y-m-d H:i:s")."' WHERE `participant_id` = '".$data['id']."';";
       $DB->query($sql);
-
-?>
-<div id='main'>
-  <div class='center'>
-    Dein Conventionticket ist für dich reserviert. <br />
-    Hinweis: Das Conventionticket ist gleichzeitig auch ein Ticket für die Galashow.
-    <br />
-    <br />
-    <a href='<?php echo $_SERVER['PHP_SELF'] ?>'>Zum Registrierungsformular</a>
-  </div>
-</div>
-</body>
-</html>
-<?php
-
-      exit();
     }
   }
 
-  if ($new 
+  if (isset($_SESSION['captcha']) && $_POST['captcha'] == $_SESSION['captcha']
       && validateDate($_POST['birthday'], 'Y-m-d')
       && $DB->escape_string($_POST['surname']) != ""
       && $DB->escape_string($_POST['prename']) != ""
       && $DB->escape_string($_POST['birthday']) != ""
       && $DB->escape_string($_POST['email']) != ""
       && filter_var($DB->escape_string($_POST['email']), FILTER_VALIDATE_EMAIL)) {
-    // participants table
-    $sql = "INSERT participants(";
-    $sql .= "surname, prename, birthday, zip, email, boat, ip, browser) VALUES (";
-    $sql .= "'". $DB->escape_string($_POST['surname']) ."', ";
-    $sql .= "'". $DB->escape_string($_POST['prename']) ."', ";
-    $sql .= "'". $DB->escape_string($_POST['birthday']) ."',";
-    $sql .= "'". getZip() ."',";
-    $sql .= "'". $DB->escape_string($_POST['email']) ."',";
-    if (isset($_POST['boat'])) $sql .= "'1',";
-    else $sql .= "'0',";
-    $sql .= "'". $_SERVER['REMOTE_ADDR'] ."',";
-    $sql .= "'". $_SERVER['HTTP_USER_AGENT'] ."');";
+    if ($new) {
+      // participants table
+      $sql = "INSERT participants(";
+      $sql .= "surname, prename, birthday, zip, email, boat, ip, browser) VALUES (";
+      $sql .= "'". $DB->escape_string($_POST['surname']) ."', ";
+      $sql .= "'". $DB->escape_string($_POST['prename']) ."', ";
+      $sql .= "'". $DB->escape_string($_POST['birthday']) ."',";
+      $sql .= "'". getZip() ."',";
+      $sql .= "'". $DB->escape_string($_POST['email']) ."',";
+      if (isset($_POST['boat'])) $sql .= "'1',";
+      else $sql .= "'0',";
+      $sql .= "'". $_SERVER['REMOTE_ADDR'] ."',";
+      $sql .= "'". $_SERVER['HTTP_USER_AGENT'] ."');";
 
-    $DB->query($sql);
+      $DB->query($sql);
 
-    // galashow table
-    $res = $DB->query("SELECT * FROM `participants` WHERE 
-                       `surname` =  '".$DB->escape_string($_POST['surname'])."' AND
-                       `prename` =  '".$DB->escape_string($_POST['prename'])."' AND
-                       `birthday` = '".$DB->escape_string($_POST['birthday'])."' AND
-                       `ip` =       '".$_SERVER['REMOTE_ADDR']."'
-                       LIMIT 1;");
-    $data = $DB->fetch_assoc($res);
-    $sql = "INSERT galashow(";
-    $sql .= "participant_id, surname, prename, birthday, zip, email, ip, browser) VALUES (";
-    $sql .= "'". $data['id'] ."', ";
-    $sql .= "'". $DB->escape_string($_POST['surname']) ."', ";
-    $sql .= "'". $DB->escape_string($_POST['prename']) ."', ";
-    $sql .= "'". $DB->escape_string($_POST['birthday']) ."',";
-    $sql .= "'". getZip() ."',";
-    $sql .= "'". $DB->escape_string($_POST['email']) ."',";
-    $sql .= "'". $_SERVER['REMOTE_ADDR'] ."',";
-    $sql .= "'". $_SERVER['HTTP_USER_AGENT'] ."');";
+      // galashow table
+      $res = $DB->query("SELECT * FROM `participants` WHERE 
+                         `surname` =  '".$DB->escape_string($_POST['surname'])."' AND
+                         `prename` =  '".$DB->escape_string($_POST['prename'])."' AND
+                         `birthday` = '".$DB->escape_string($_POST['birthday'])."' AND
+                         `ip` =       '".$_SERVER['REMOTE_ADDR']."'
+                         LIMIT 1;");
+      $data = $DB->fetch_assoc($res);
+      $sql = "INSERT galashow(";
+      $sql .= "participant_id, surname, prename, birthday, zip, email, ip, browser) VALUES (";
+      $sql .= "'". $data['id'] ."', ";
+      $sql .= "'". $DB->escape_string($_POST['surname']) ."', ";
+      $sql .= "'". $DB->escape_string($_POST['prename']) ."', ";
+      $sql .= "'". $DB->escape_string($_POST['birthday']) ."',";
+      $sql .= "'". getZip() ."',";
+      $sql .= "'". $DB->escape_string($_POST['email']) ."',";
+      $sql .= "'". $_SERVER['REMOTE_ADDR'] ."',";
+      $sql .= "'". $_SERVER['HTTP_USER_AGENT'] ."');";
 
-    $DB->query($sql);
+      $DB->query($sql);
+    }
 
 ?>
 <div id='main'>
@@ -138,52 +126,33 @@ if ( isset($_POST['reg']) ) {
 <?php
 
   }
-  else {
-
-?>
-<div id='main'>
-  <div class='center'>
-    Anzahl noch verfügbarer Tickets: <b> <?php echo $numfree; ?> </b> <br />
-    <br />
-    <font color='#ff0000'>Eingabe fehlerhaft oder bereits registriert!</font>
-    <br />
-    Datumsformat: YYYY-MM-DD, z.B. 1999-01-28 für 28. Januar 1999
-    <br />
-    <br />
-  </div>
-  <form action='registration.php' name='reg' method='post'>
-    <table align='center' class='registration'>
-    <tr><td>Vorname</td><td><input type='text' name='prename' value='<?php echo $_POST['prename']; ?>' maxlength='100' size='30' /></td></tr>
-      <tr><td>Nachname</td><td ><input type='text' name='surname' value='<?php echo $_POST['surname']; ?>' maxlength='100' size='30' /></td></tr>
-      <tr><td>Geburtstag</td><td ><input type='text' name='birthday' value='<?php echo $_POST['birthday']; ?>' maxlength='10' size='30' /></td></tr>
-      <tr><td>E-Mail</td><td ><input type='text' name='email' value='<?php echo $_POST['email']; ?>' maxlength='100' size='30' /></td></tr>
-      <tr><td>&#9972;</td><td ><input type='checkbox' name='boat' <?php if (isset($_POST['boat'])) echo "checked"; ?> /></td></tr>
-      <tr><td></td><td align='right'><input name='reg' type='submit' value='Anmelden' class='button' /></td></tr>
-    </table>
-  </form>
-</div>
-<br /> <br /> &#9972; - Interesse an der Stocherkahnfahrt am Sonntag teilzunehmen?
-<?php
-
-  }
+  else unset($_POST['captcha']);
 
 
 }
-else {
+if (!isset($_POST['reg']) || !isset($_POST['captcha'])) {
 
 ?>
 <div id='main'>
   <div class='center'>
     Anzahl noch verfügbarer Tickets: <b> <?php echo $numfree; ?> </b> <br />
     <br />
+<?php if(isset($_POST['reg'])) { ?>
+    <font color='#ff0000'>Eingabe fehlerhaft!</font>
+    <br />
+    Datumsformat: YYYY-MM-DD, z.B. 1999-01-28 für 28. Januar 1999. <br />
+    Eingabe des Sicherheitscodes nicht vergessen! <br />
+    <br />
+<?php } ?>
   </div>
   <form action='registration.php' name='reg' method='post'>
     <table align='center' class='registration'>
-      <tr><td>Vorname</td><td><input type='text' name='prename' value='' maxlength='100' size='30' /></td></tr>
-      <tr><td>Nachname</td><td ><input type='text' name='surname' value='' maxlength='100' size='30' /></td></tr>
-      <tr><td>Geburtstag</td><td ><input type='text' name='birthday' value='YYYY-MM-DD' maxlength='10' size='30' /></td></tr>
-      <tr><td>E-Mail</td><td ><input type='text' name='email' value='' maxlength='100' size='30' /></td></tr>
-      <tr><td>&#9972;</td><td ><input type='checkbox' name='boat' /></td></tr>
+    <tr><td>Vorname</td><td><input type='text' name='prename' value='<?php if(isset($_POST['prename'])) echo $_POST['prename']; ?>' maxlength='100' size='30' /></td></tr>
+      <tr><td>Nachname</td><td ><input type='text' name='surname' value='<?php if(isset($_POST['surname'])) echo $_POST['surname']; ?>' maxlength='100' size='30' /></td></tr>
+      <tr><td>Geburtstag</td><td ><input type='text' name='birthday' value='<?php if(isset($_POST['birthday'])) echo $_POST['birthday']; ?>' maxlength='10' size='30' /></td></tr>
+      <tr><td>E-Mail</td><td ><input type='text' name='email' value='<?php if(isset($_POST['email'])) echo $_POST['email']; ?>' maxlength='100' size='30' /></td></tr>
+      <tr><td>&#9972;</td><td ><input type='checkbox' name='boat' <?php if (isset($_POST['boat'])) echo "checked"; ?> /></td></tr>
+      <tr><td><img src='captcha/captcha.php' class='captcha' border='0' alt='Sicherheitscode' title='Sicherheitscode' height='25px'></td><td ><input type='text' name='captcha' value='' maxlength='5' size='30' /></td></tr>
       <tr><td></td><td align='right'><input name='reg' type='submit' value='Anmelden' class='button' /></td></tr>
     </table>
   </form>
