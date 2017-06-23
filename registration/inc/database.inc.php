@@ -8,14 +8,14 @@ class Database
   public function __construct($name=NULL)
   {
     $this->db = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, $name);
-    if (mysqli_connect_errno())
+    if (mysqli_connect_errno() && ini_get('error_reporting')!=0)
       echo "<div style='background-color:#000000;color:#FFFFFF' ><b>DB connection error!</b> <i>".mysqli_connect_error()."</i></div>";
   }
   
   public function query($sql)
   {
     $res = mysqli_query($this->db, $sql);
-    if(!$res)
+    if(!$res && ini_get('error_reporting')!=0)
       echo "<div style='background-color:#000000;color:#FFFFFF' ><b>Database error!</b><i>".mysqli_error($this->db)."</i></div>";
     return $res;
   }
