@@ -6,6 +6,7 @@ include("config/config.php");
 include("inc/database.inc.php");
 include("inc/validateDate.inc.php");
 include("inc/getZip.inc.php");
+include("inc/getAge.inc.php");
 
 $DB = new Database("mexicon");  
 
@@ -64,17 +65,19 @@ if ( isset($_POST['reg']) ) {
     }
   }
 
-  if (isset($_SESSION['captcha']) && $_POST['captcha'] == $_SESSION['captcha'] 
+  if (isset($_SESSION['captcha']) && strtolower($_POST['captcha']) == strtolower($_SESSION['captcha'])
       && validateDate($_POST['birthday'], 'Y-m-d')
       && $DB->escape_string($_POST['surname']) != ""
       && $DB->escape_string($_POST['prename']) != ""
       && $DB->escape_string($_POST['birthday']) != ""
       && $DB->escape_string($_POST['email']) != ""
-      && filter_var($DB->escape_string($_POST['email']), FILTER_VALIDATE_EMAIL)) {
+      && filter_var($DB->escape_string($_POST['email']), FILTER_VALIDATE_EMAIL)
+      && getAgeGala($DB->escape_string($_POST['birthday'])) > 6) {
     if($new) {
       // galashow table
       $sql = "INSERT galashow(";
-      $sql .= "surname, prename, birthday, zip, email, ip, browser) VALUES (";
+      $sql .= "ticketcount, surname, prename, birthday, zip, email, ip, browser) VALUES (";
+      $sql .= "'". $DB->escape_string($_POST['ticketcount']) ."', ";
       $sql .= "'". $DB->escape_string($_POST['surname']) ."', ";
       $sql .= "'". $DB->escape_string($_POST['prename']) ."', ";
       $sql .= "'". $DB->escape_string($_POST['birthday']) ."',";
@@ -107,6 +110,10 @@ if (!isset($_POST['reg']) || !isset($_POST['captcha'])) {
     $birthdayvalue = $_POST['birthday'];
   else
     $birthdayvalue = 'YYYY-MM-DD';
+  if(isset($_POST['ticketcount'])) 
+    $ticketcount = $_POST['ticketcount'];
+  else
+    $ticketcount = 1;
 
 ?>
 <div id='main'>
@@ -118,16 +125,31 @@ if (!isset($_POST['reg']) || !isset($_POST['captcha'])) {
     <br />
     Datumsformat: YYYY-MM-DD, z.B. 1999-01-28 für 28. Januar 1999. <br />
     Eingabe des Sicherheitscodes nicht vergessen! <br />
+    Du musst über 6 Jahre alt sein! <br />
     <br />
 <?php } ?>
   </div>
-  <form action='galatickets.php' name='reg' method='post'>
+  <form action='galatickets.php' name='reg' method='post' class='left'>
     <table align='center' class='galatickets'>
-    <tr><td>Vorname</td><td><input type='text' name='prename' value='<?php if(isset($_POST['prename'])) echo $_POST['prename']; ?>' maxlength='100' size='30' /></td></tr>
-      <tr><td>Nachname</td><td ><input type='text' name='surname' value='<?php if(isset($_POST['surname'])) echo $_POST['surname']; ?>' maxlength='100' size='30' /></td></tr>
-      <tr><td>Geburtstag</td><td ><input type='text' name='birthday' value='<?php echo $birthdayvalue; ?>' maxlength='10' size='30' /></td></tr>
-      <tr><td>E-Mail</td><td ><input type='text' name='email' value='<?php if(isset($_POST['email'])) echo $_POST['email']; ?>' maxlength='100' size='30' /></td></tr>
-      <tr><td><img src='captcha/captcha.php' class='captcha' border='0' alt='Sicherheitscode' title='Sicherheitscode' height='25px'></td><td ><input type='text' name='captcha' value='' maxlength='5' size='30' /></td></tr>
+      <tr><td>Vorname</td><td><input type='text' name='prename' value='<?php if(isset($_POST['prename'])) echo $_POST['prename']; ?>' maxlength='100' size='30' /></td></tr>
+      <tr><td>Nachname</td><td><input type='text' name='surname' value='<?php if(isset($_POST['surname'])) echo $_POST['surname']; ?>' maxlength='100' size='30' /></td></tr>
+      <tr><td>Geburtstag</td><td><input type='text' name='birthday' value='<?php echo $birthdayvalue; ?>' maxlength='10' size='30' /></td></tr>
+      <tr><td>E-Mail</td><td><input type='text' name='email' value='<?php if(isset($_POST['email'])) echo $_POST['email']; ?>' maxlength='100' size='30' /></td></tr>
+      <tr><td>Ticketanzahl</td><td>
+        <select name='ticketcount'>
+          <option value="1"<?php if($ticketcount== 1) echo " selected"; ?>>1</option>
+          <option value="2"<?php if($ticketcount== 2) echo " selected"; ?>>2</option>
+          <option value="3"<?php if($ticketcount== 3) echo " selected"; ?>>3</option>
+          <option value="4"<?php if($ticketcount== 4) echo " selected"; ?>>4</option>
+          <option value="5"<?php if($ticketcount== 5) echo " selected"; ?>>5</option>
+          <option value="6"<?php if($ticketcount== 6) echo " selected"; ?>>6</option>
+          <option value="7"<?php if($ticketcount== 7) echo " selected"; ?>>7</option>
+          <option value="8"<?php if($ticketcount== 8) echo " selected"; ?>>8</option>
+          <option value="9"<?php if($ticketcount== 9) echo " selected"; ?>>9</option>
+          <option value="10"<?php if($ticketcount== 10) echo " selected"; ?>>10</option>
+        </select>
+      </td></tr> 
+      <tr><td><img src='captcha/captcha.php' class='captcha' border='0' alt='Sicherheitscode' title='Sicherheitscode' height='25px'></td><td><input type='text' name='captcha' value='' maxlength='5' size='30' /></td></tr>
       <tr><td></td><td align='right'><input name='reg' type='submit' value='Ticket reservieren' class='button' /></td></tr>
     </table>
   </form>

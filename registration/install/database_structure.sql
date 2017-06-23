@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `mexicon`.`participants` (
 
 CREATE TABLE IF NOT EXISTS `mexicon`.`galashow` ( 
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT , 
+  `ticketcount` INT(2) UNSIGNED NOT NULL DEFAULT '1' ,
   `participant_id` INT(10) UNSIGNED NULL , 
   `surname` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL , 
   `prename` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL , 

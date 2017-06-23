@@ -32,7 +32,7 @@ for ($i = 0; $i<5; $i++) {
 $ttfsize = rand(24,28); //Schriftgrösse 
  $angle = rand(-15,15); 
  $t_x += 20;
- $t_y = rand(20,28); 
+ $t_y = rand(22,25); 
  $letter = substr($text,$i,1);
  imagettftext($img, $ttfsize, $angle, $t_x, $t_y, $color, $ttf, $letter); 
 }

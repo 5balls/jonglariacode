@@ -25,7 +25,8 @@ $numfree = GALASLOTS - $numreg;
   <h1>Galashow der 6. Tübinger Jonglierconvention</h1>
   <h2>Ticketinhaber [<a href='./galashow.csv'>csv</a>]</h2>
 </div>
-CID - Convention ID, bei Conventiongängern | &euro; - gezahlt | &#9889; - Alter bei der Galashow
+<div id='main' class='center'>
+CID - Convention ID, bei Conventiongängern | &#9960; - Ticketanzahl | &#9889; - Alter bei der Galashow | &euro; - gezahlt | &#9977; - Eingecheckt
 <br /> <br />
 &#35; <?php echo $numreg; ?>
 <br /> <br />
@@ -37,6 +38,7 @@ echo "    <tr>";
 echo "<td><b><a href='".$_SERVER['PHP_SELF']."'>&#9745;</a></b></td>";
 echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=id'>ID</a></b></td>";
 echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=participant_id'>CID</a></b></td>";
+echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=ticketcount'>&#9960;</a></b></td>";
 echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=prename'>Vorname</a></b></td>";
 echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=surname'>Nachname</a></b></td>";
 echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=birthday'>&#9889;</a></b></td>";
@@ -59,6 +61,7 @@ while ($data = $DB->fetch_assoc($res)) {
   echo "<td>".$data['id']."</td>";
   if (!is_null($data['participant_id'])) echo "<td>".$data['participant_id']."</td>";
   else echo "<td>&#x2718;</td>";
+  echo "<td>".$data['ticketcount']."</td>";
   echo "<td>".$data['prename']."</td>";
   echo "<td>".$data['surname']."</td>";
   echo "<td>".getAgeGala($data['birthday'])."</td>";
@@ -108,7 +111,7 @@ while ($data = $DB->fetch_assoc($res)) {
 fclose($csv);
 echo "  </table>\n";
 ?>
-<div align='left' style='margin-left:5%;'>
+<div class='buttonfield'>
   <br />
   <button name='update' type='submit' value='payed' class='button'>Selektion hat bezahlt</button>
   <br /><br />
@@ -123,6 +126,7 @@ echo "  </table>\n";
   <button name='update' type='submit' value='delete' class='button' onclick='return confirm(\"Selektion wirklich löschen?\")'>
     Selektion <b>löschen</b>
   </button>
+</div>
 </div>
 </form>
 </body>

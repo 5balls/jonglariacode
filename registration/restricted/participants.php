@@ -25,7 +25,8 @@ $numfree = SLOTS - $numreg;
   <h1>6. Tübinger Jonglierconvention</h1>
   <h2>Teilnehmerliste [<a href='./participants.csv'>csv</a>]</h2>
 </div>
-&euro; - gezahlt | &#9889; - Alter bei Beginn der Convention | &#9972; - Stocherkahn Interesse
+<div id='main' class='center'>
+&#9889; - Alter bei Beginn der Convention | &euro; - gezahlt | &#9972; - Stocherkahn Interesse | &#9977; - Eingecheckt
 <br /> <br />
 &#35; <?php echo $numreg; ?>
 <br /> <br />
@@ -108,7 +109,7 @@ while ($data = $DB->fetch_assoc($res)) {
 fclose($csv);
 echo "  </table>\n";
 ?>
-<div align='left' style='margin-left:5%;'>
+<div class='buttonfield'>
   <br />
   <button name='update' type='submit' value='payed' class='button'>Selektion hat bezahlt</button>
   <br /><br />
@@ -123,6 +124,7 @@ echo "  </table>\n";
   <button name='update' type='submit' value='delete' class='button' onclick='return confirm(\"Selektion wirklich löschen?\")'>
     Selektion <b>löschen</b>
   </button>
+</div>
 </div>
 </form>
 </body>
