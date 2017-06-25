@@ -1,12 +1,12 @@
-<?php // galatickets.php
+<?php // index.php
 
 session_start(); 
 
-include("config/config.php");
-include("inc/database.inc.php");
-include("inc/validateDate.inc.php");
-include("inc/getZip.inc.php");
-include("inc/getAge.inc.php");
+include("../config/config.php");
+include("../inc/database.inc.php");
+include("../inc/validateDate.inc.php");
+include("../inc/getZip.inc.php");
+include("../inc/getAge.inc.php");
 
 $DB = new Database("mexicon");  
 
@@ -22,7 +22,7 @@ $numfree = GALASLOTS - $numreg;
 <head>
 <meta http-equiv='content-type' content='text/html; charset=<?php echo CHARSET; ?>'/>
 <title>Jonglaria</title>
-<link rel='stylesheet' type='text/css' href='./style.css' />
+<link rel='stylesheet' type='text/css' href='../style.css' />
 </head>
 <body>
 <div id='header'>
@@ -129,7 +129,7 @@ if (!isset($_POST['reg']) || !isset($_POST['captcha'])) {
     <br />
 <?php } ?>
   </div>
-  <form action='galatickets.php' name='reg' method='post' class='left'>
+  <form action='<?php echo $_SERVER['REQUEST_URI']; ?>' name='reg' method='post' class='left'>
     <table align='center' class='galatickets'>
       <tr><td>Vorname</td><td><input type='text' name='prename' value='<?php if(isset($_POST['prename'])) echo $_POST['prename']; ?>' maxlength='100' size='30' /></td></tr>
       <tr><td>Nachname</td><td><input type='text' name='surname' value='<?php if(isset($_POST['surname'])) echo $_POST['surname']; ?>' maxlength='100' size='30' /></td></tr>
