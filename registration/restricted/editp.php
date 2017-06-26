@@ -3,6 +3,7 @@
 include("../config/config.php");
 include("../inc/database.inc.php");
 include("../inc/getAge.inc.php");
+include("../inc/createTicket.inc.php");
 
 $DB = new Database("mexicon");  
 
@@ -15,6 +16,7 @@ if (isset($_GET['id'])) {
       $DB->query($sql);
       $sql = "UPDATE `galashow` SET `payed` = '1' WHERE `participant_id` = '".$_GET['id']."';";
       $DB->query($sql);
+      createTicket($_GET['id'], $DB); 
     }
     else if ($_GET['payed'] == "false" || $_GET['payed'] == 0) {
       $sql = "UPDATE `participants` SET `payed` = '0' WHERE `id` = '".$_GET['id']."';";
@@ -48,6 +50,7 @@ else if (isset($_POST['update'])) {
         $DB->query($sql);
         $sql = "UPDATE `galashow` SET `payed` = '1' WHERE `participant_id` = '".$id."';";
         $DB->query($sql);
+        createTicket($id, $DB); 
       }
     }
   }
