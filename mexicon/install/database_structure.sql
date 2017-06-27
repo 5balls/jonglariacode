@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `mexicon`.`convention` (
 --
 
 CREATE TABLE IF NOT EXISTS `mexicon`.`galashow` ( 
-  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT , 
+  `id` INT(10) UNSIGNED NOT NULL , 
   `ticketcount` INT(2) UNSIGNED NOT NULL DEFAULT '1' ,
   `payed` BOOLEAN NOT NULL DEFAULT FALSE , 
   `regtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `mexicon`.`galashow` (
 --
 
 CREATE TABLE IF NOT EXISTS `mexicon`.`caregiver` ( 
-  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT , 
+  `id` INT(10) UNSIGNED NOT NULL , 
   `surname` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL , 
   `prename` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL , 
   `birthday` DATE COLLATE utf8_unicode_ci NOT NULL , 

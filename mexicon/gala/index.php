@@ -80,7 +80,8 @@ if ( isset($_POST['reg']) ) {
       $sql .= "'". $DB->escape_string($_POST['surname']) ."', ";
       $sql .= "'". $DB->escape_string($_POST['prename']) ."', ";
       $sql .= "'". $DB->escape_string($_POST['birthday']) ."',";
-      $sql .= "'". getZip() ."',";
+      if (is_null(getZip())) $sql .= "NULL,";
+      else $sql .= "'". getZip() ."',";
       $sql .= "'". $DB->escape_string($_POST['email']) ."',";
       $sql .= "'". $_SERVER['REMOTE_ADDR'] ."',";
       $sql .= "'". $_SERVER['HTTP_USER_AGENT'] ."');";

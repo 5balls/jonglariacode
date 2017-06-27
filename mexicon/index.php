@@ -70,13 +70,17 @@ if ( isset($_POST['reg']) ) {
   }
 
   if (isset($_SESSION['captcha']) && strtolower($_POST['captcha']) == strtolower($_SESSION['captcha'])
-      && validateDate($_POST['birthday'], 'Y-m-d')
+      && validateDate($DB->escape_string($_POST['birthday']), 'Y-m-d')
       && $DB->escape_string($_POST['surname']) != ""
       && $DB->escape_string($_POST['prename']) != ""
-      && $DB->escape_string($_POST['birthday']) != ""
       && $DB->escape_string($_POST['email']) != ""
       && filter_var($DB->escape_string($_POST['email']), FILTER_VALIDATE_EMAIL)
-      && getAgeConvention($DB->escape_string($_POST['birthday'])) > 6) {
+      && (getAgeConvention($DB->escape_string($_POST['birthday'])) >= 18
+        || (getAgeConvention($DB->escape_string($_POST['birthday'])) > 6 
+          && $DB->escape_string($_POST['cg_surname']) != "" 
+          && $DB->escape_string($_POST['cg_prename']) != "" 
+          && validateDate($DB->escape_string($_POST['cg_birthday']), 'Y-m-d')
+          && getAgeConvention($DB->escape_string($_POST['cg_birthday'])) >= 18 ) ) ) {
     if ($new) {
       // person table
       $sql = "INSERT person(";
@@ -84,7 +88,8 @@ if ( isset($_POST['reg']) ) {
       $sql .= "'". $DB->escape_string($_POST['surname']) ."', ";
       $sql .= "'". $DB->escape_string($_POST['prename']) ."', ";
       $sql .= "'". $DB->escape_string($_POST['birthday']) ."',";
-      $sql .= "'". getZip() ."',";
+      if (is_null(getZip())) $sql .= "NULL,";
+      else $sql .= "'". getZip() ."',";
       $sql .= "'". $DB->escape_string($_POST['email']) ."',";
       $sql .= "'". $_SERVER['REMOTE_ADDR'] ."',";
       $sql .= "'". $_SERVER['HTTP_USER_AGENT'] ."');";
@@ -115,6 +120,18 @@ if ( isset($_POST['reg']) ) {
       $sql .= ");";
       $DB->query($sql);
 
+      // caregiver table
+      if ($DB->escape_string($_POST['cg_surname']) != ""
+          && $DB->escape_string($_POST['cg_prename']) != ""
+          && validateDate($DB->escape_string($_POST['cg_birthday']), 'Y-m-d') ) {
+        $sql = "INSERT caregiver(";
+        $sql .= "id, surname, prename, birthday) VALUES (";
+        $sql .= "'". $person['id'] ."', ";
+        $sql .= "'". $DB->escape_string($_POST['cg_surname']) ."', ";
+        $sql .= "'". $DB->escape_string($_POST['cg_prename']) ."', ";
+        $sql .= "'". $DB->escape_string($_POST['cg_birthday']) ."');";
+        $DB->query($sql);
+      }
     }
 
 ?>
@@ -139,6 +156,10 @@ if (!isset($_POST['reg']) || !isset($_POST['captcha'])) {
     $birthdayvalue = $_POST['birthday'];
   else
     $birthdayvalue = 'YYYY-MM-DD';
+  if(isset($_POST['cg_birthday'])) 
+    $cg_birthdayvalue = $_POST['cg_birthday'];
+  else
+    $cg_birthdayvalue = 'YYYY-MM-DD';
 
 ?>
 <div id='main'>
@@ -146,11 +167,22 @@ if (!isset($_POST['reg']) || !isset($_POST['captcha'])) {
     Anzahl noch verfügbarer Tickets: <b> <?php echo $numfree; ?> </b> <br />
     <br />
 <?php if(isset($_POST['reg'])) { ?>
-    <font color='#ff0000'>Eingabe fehlerhaft!</font>
+    <font color='#ff0000'>Achtung!</font>
     <br />
+<?php   if (validateDate($_POST['birthday'], 'Y-m-d')) { ?>
+<?php     if(getAgeConvention($DB->escape_string($_POST['birthday'])) < 6) { ?>
+    Du musst über 6 Jahre alt sein um die für die Convention zu registrieren! 
+    Bist Du unter 6 Jahre alt ist der Eintritt frei und deswegen keine Registrierung notwendig. <br />
+<?php     } else if(getAgeConvention($DB->escape_string($_POST['birthday'])) < 18) { ?>
+<?php       $youth=true; ?>
+    Du bist unter 18 und musst deshalb eine Bezugsperson angeben 
+    und einen <i>Muttizettel</i> ausgefüllt zur Convention mitbrigen! <br />
+<?php     } ?> 
+<?php   } ?> 
+    <br />
+    Alle Felder müssen ausgefüllt sein. <br />
     Datumsformat: YYYY-MM-DD, z.B. 1999-01-28 für 28. Januar 1999. <br />
     Eingabe des Sicherheitscodes nicht vergessen! <br />
-    Du musst über 6 Jahre alt sein! <br />
     <br />
 <?php } ?>
   </div>
@@ -161,12 +193,24 @@ if (!isset($_POST['reg']) || !isset($_POST['captcha'])) {
       <tr><td>Geburtstag</td><td><input type='text' name='birthday' value='<?php echo $birthdayvalue; ?>' maxlength='10' size='30' /></td></tr>
       <tr><td>E-Mail</td><td><input type='text' name='email' value='<?php if(isset($_POST['email'])) echo $_POST['email']; ?>' maxlength='100' size='30' /></td></tr>
       <tr><td>&#9972;</td><td ><input type='checkbox' name='boat' <?php if (isset($_POST['boat'])) echo "checked"; ?> /></td></tr>
+<?php if(isset($youth)) { ?>
+      <tr><td>&#9937; Vorname</td><td><input type='text' name='cg_prename' value='<?php if(isset($_POST['cg_prename'])) echo $_POST['cg_prename']; ?>' maxlength='100' size='30' /></td></tr>
+      <tr><td>&#9937; Nachname</td><td><input type='text' name='cg_surname' value='<?php if(isset($_POST['cg_surname'])) echo $_POST['cg_surname']; ?>' maxlength='100' size='30' /></td></tr>
+      <tr><td>&#9937; Geburtstag</td><td><input type='text' name='cg_birthday' value='<?php echo $cg_birthdayvalue; ?>' maxlength='10' size='30' /></td></tr>
+<?php } else { ?>
+      <input type='hidden' name='cg_prename' value='' />
+      <input type='hidden' name='cg_surname' value='' />
+      <input type='hidden' name='cg_birthday' value='YYYY-MM-DD' />
+<?php } ?>
       <tr><td><img src='captcha/captcha.php' class='captcha' border='0' alt='Sicherheitscode' title='Sicherheitscode' height='25px'></td><td><input type='text' name='captcha' value='' maxlength='5' size='30' /></td></tr>
       <tr><td></td><td align='right'><input name='reg' type='submit' value='Anmelden' class='button' /></td></tr>
     </table>
   </form>
 </div>
 <br /> <br /> &#9972; - Interesse an der Stocherkahnfahrt am Sonntag teilzunehmen?
+<?php if(isset($youth)) { ?>
+<br /> &#9937; - Bezugsperson (Fülle in diese Felder den Vor-, Nachname und Geburtstag deiner Bezugsperson)
+<?php } ?>
 <?php
 
 } 
