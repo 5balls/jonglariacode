@@ -6,7 +6,9 @@ include("../inc/database.inc.php");
 $DB = new Database("mexicon");
 
 // Database structure
-$querys = array("DROP TABLE participants;", 
+$querys = array("DROP TABLE person;", 
+                "DROP TABLE caregiver;",
+                "DROP TABLE convention;",
                 "DROP TABLE galashow;");
 foreach($querys as $sql)
 {

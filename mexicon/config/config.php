@@ -5,7 +5,7 @@
 error_reporting(E_ALL);
 
 // ############ BASEDIR ############ //
-define('BASEDIR', '/jonglaria/registration');
+define('BASEDIR', '/jonglaria/mexicon');
 
 // ############ CHARSET ############ //
 // utf-8 // iso-8859-1
