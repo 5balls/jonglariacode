@@ -60,9 +60,11 @@ CREATE TABLE IF NOT EXISTS `mexicon`.`galashow` (
 
 CREATE TABLE IF NOT EXISTS `mexicon`.`caregiver` ( 
   `id` INT(10) UNSIGNED NOT NULL , 
+  `caregiver_id` INT(10) UNSIGNED NULL DEFAULT NULL, 
   `surname` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL , 
   `prename` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL , 
   `birthday` DATE COLLATE utf8_unicode_ci NOT NULL , 
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE , 
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_unicode_ci;
 

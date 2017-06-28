@@ -124,9 +124,19 @@ if ( isset($_POST['reg']) ) {
       if ($DB->escape_string($_POST['cg_surname']) != ""
           && $DB->escape_string($_POST['cg_prename']) != ""
           && validateDate($DB->escape_string($_POST['cg_birthday']), 'Y-m-d') ) {
+        $res_cg = $DB->query("SELECT * FROM `person`"
+                          ." WHERE `surname` = '".$DB->escape_string($_POST['cg_surname'])."'"
+                          ." AND `prename` = '".$DB->escape_string($_POST['cg_prename'])."'"
+                          ." AND `birthday` = '".$DB->escape_string($_POST['cg_birthday'])."'"
+                          ." AND `ip` = '".$_SERVER['REMOTE_ADDR']."'"
+                          ." LIMIT 1;");
+        if (!($caregiver = $DB->fetch_assoc($res_cg))) $caregiver = null;
         $sql = "INSERT caregiver(";
-        $sql .= "id, surname, prename, birthday) VALUES (";
+        $sql .= "id, ";
+        if(!is_null($caregiver)) $sql .= "caregiver_id, ";
+        $sql .= "surname, prename, birthday) VALUES (";
         $sql .= "'". $person['id'] ."', ";
+        if(!is_null($caregiver)) $sql .= "'".$caregiver['id']."', ";
         $sql .= "'". $DB->escape_string($_POST['cg_surname']) ."', ";
         $sql .= "'". $DB->escape_string($_POST['cg_prename']) ."', ";
         $sql .= "'". $DB->escape_string($_POST['cg_birthday']) ."');";
@@ -141,7 +151,7 @@ if ( isset($_POST['reg']) ) {
     Hinweis: Das Conventionticket ist gleichzeitig auch ein Ticket für die Galashow.
     <br />
     <br />
-    <a href='<?php echo $_SERVER['PHP_SELF'] ?>'>Zum Registrierungsformular</a>
+    <a href='<?php echo $_SERVER['REQUEST_URI'] ?>'>Zum Registrierungsformular</a>
   </div>
 </div>
 <?php

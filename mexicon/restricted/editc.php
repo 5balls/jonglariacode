@@ -94,9 +94,27 @@ else if (isset($_POST['update'])) {
       }
     }
   }
+  // selection caregiver verified
+  if ($_POST['update'] == 'verified') {
+    if(!empty($_POST['id_list'])) {
+      foreach($_POST['id_list'] as $id) {
+        $sql = "UPDATE `caregiver` SET `verified` = '1' WHERE `id` = '".$id."';";
+        $DB->query($sql);
+      }
+    }
+  }
+  // selection caregiver not verified
+  if ($_POST['update'] == 'notverified') {
+    if(!empty($_POST['id_list'])) {
+      foreach($_POST['id_list'] as $id) {
+        $sql = "UPDATE `caregiver` SET `verified` = '0' WHERE `id` = '".$id."';";
+        $DB->query($sql);
+      }
+    }
+  }
 }
 
-$redirect_page = 'participants.php';
+$redirect_page = 'redirect.php?page=mexicon';
 header('Location: ' .$redirect_page);
 exit();
 

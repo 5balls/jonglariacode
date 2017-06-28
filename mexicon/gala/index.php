@@ -111,7 +111,7 @@ if ( isset($_POST['reg']) ) {
     Dein Ticket für die Galashow ist reserviert.
     <br />
     <br />
-    <a href='<?php echo $_SERVER['PHP_SELF'] ?>'>Zum Ticketformular</a>
+    <a href='<?php echo $_SERVER['REQUEST_URI'] ?>'>Zum Ticketformular</a>
   </div>
 </div>
 <?php

@@ -104,7 +104,7 @@ else if (isset($_POST['update'])) {
   }
 }
 
-$redirect_page = 'galashow.php';
+$redirect_page = 'redirect.php?page=gala';
 header('Location: ' .$redirect_page);
 exit();
 

@@ -2,8 +2,10 @@
 
 include("../config/config.php");
 include("../inc/database.inc.php");
+include("../inc/printMenu.inc.php");
 include("../inc/getAge.inc.php");
 include("../inc/checkConvention.inc.php");
+include("../inc/printBoolValue.inc.php");
 
 $DB = new Database("mexicon");  
 
@@ -22,12 +24,13 @@ $numfree = GALASLOTS - $numreg;
 <link rel='stylesheet' type='text/css' href='../style.css' />
 </head>
 <body>
+<?php echo printMenu(); ?>
 <div id='header'>
   <h1>Galashow der 6. Tübinger Jonglierconvention</h1>
   <h2>Ticketinhaber [<a href='./galashow.csv'>csv</a>]</h2>
 </div>
 <div id='main' class='center'>
-&#9977; - Conventiongänger | &#9960; - Ticketanzahl | &#9889; - Alter bei der Galashow | &euro; - gezahlt | &#9885; - eingecheckt
+&#9978; - Conventiongänger | &#9960; - Ticketanzahl | &#9889; - Alter bei der Galashow | &euro; - gezahlt | &#9885; - eingecheckt
 <br /> <br />
 &#35; <?php echo $numreg; ?>
 <br /> <br />
@@ -38,7 +41,7 @@ echo "  <table class='datatable'>\n";
 echo "    <tr>";
 echo "<td><b><a href='".$_SERVER['PHP_SELF']."'>&#9745;</a></b></td>";
 echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=id'>ID</a></b></td>";
-echo "<td><b>&#9977;</b></td>";
+echo "<td><b>&#9978;</b></td>";
 echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=ticketcount'>&#9960;</a></b></td>";
 echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=prename'>Vorname</a></b></td>";
 echo "<td><b><a href='".$_SERVER['PHP_SELF']."?orderby=surname'>Nachname</a></b></td>";
@@ -69,12 +72,7 @@ while ($person = $DB->fetch_assoc($res)) {
     echo "<td>".$person['prename']."</td>";
     echo "<td>".$person['surname']."</td>";
     echo "<td>".getAgeGala($person['birthday'])."</td>";
-    if ($person['payed'])
-      //echo "<td><a href='./editg.php?id=".$person['id']."&payed=false'>&#x2714;</a></td>";
-      echo "<td>&#x2714;</td>";
-    else 
-      //echo "<td><a href='./editg.php?id=".$person['id']."&payed=true'>&#x2718;</a></td>";
-      echo "<td>&#x2718;</td>";
+    echo "<td>".printBoolValue($person['payed'])."</td>";
     if (!is_null($person['arrivaltime'])) echo "<td>&#x2714;</td>";
     else echo "<td>&#x2718;</td>";
     //echo "<td>".$person['zip']."</td>";
