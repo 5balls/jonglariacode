@@ -31,7 +31,7 @@ class Ticket
 	public function createElectronicTicket($id)
 	{
 		# Todo multiple return values?
-		$exec_string = "LD_LIBRARY_PATH=$(pwd):\$LD_LIBRARY_PATH ./example1";
+		$exec_string = "cd /is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/dynamic && LD_LIBRARY_PATH=$(pwd):\$LD_LIBRARY_PATH ./example1";
 		$exec_string .= " -1\"".$this->tdb->getFirstName($id)."\"";	
 		$exec_string .= " -2\"".$this->tdb->getFamilyName($id)."\"";
 		$exec_string .= " -b\"".$this->tdb->getBirthDate($id)."\"";
@@ -41,7 +41,7 @@ class Ticket
 			$exec_string .= " -s\"".$supervisor."\"";
 		}
 		$exec_string .= " -i\"http://jonglaria.org/reg/".$this->createUniqueIdentifier($id)."\"";
-		$exec_string .= " | gs";
+		$exec_string .= " | TEMP=. gs";
 		$exec_string .= " -sstdout=%stderr";
 		$exec_string .= " -dBATCH";
 		$exec_string .= " -dNOPAUSE";
@@ -54,14 +54,14 @@ class Ticket
 		$exec_string .= " -f -";
 		$exec_string .= " -c \"[ /Author (Jonglaria e.V.) /Subject (Electronic Ticket) /Keywords (Convention, Tuebingen, 2017, Juggling, Jonglaria) /DOCINFO pdfmark\"";
 		return shell_exec($exec_string);
-		if($retval == 0)
+		/* Debug code: */
+		exec($exec_string, $output, $retVal);
+		print "<p>RetVal:".$retVal."</p>";
+		foreach($output as $out)
 		{
-			return $pdf_output;
+			print "<p>out:".$out."</p>";
 		}
-		else
-		{
-			return "";
-		}
+		return "";
 	}
 	public function sendElectronicTicket($id)
 	{
@@ -69,8 +69,9 @@ class Ticket
 		$subject = "Elektronisches Ticket Mexicon";
 
 		$separator = md5(time());
-		
-		$ticketAttachment = chunk_split(base64_encode($this->createElectronicTicket($id)));
+		$ticket = $this->createElectronicTicket($id);
+
+		$ticketAttachment = chunk_split(base64_encode($ticket));
 		$eol = "\r\n";
 		$headers = "From: Mexicon <registration@jonglaria.org>".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
@@ -80,19 +81,20 @@ class Ticket
 		// message
 		$body = "--" . $separator . $eol;
 		$body .= "Content-Type: text/plain; charset=\"utf-8\"".$eol;
-		$body .= "Content-Transfer-Encoding: 8bit".$eol;
+		$body .= "Content-Transfer-Encoding: 8bit".$eol.$eol;
 		$body .= "Hallo ".$this->tdb->getFirstName($id)." ".$this->tdb->getFamilyName($id).",".$eol.$eol;
 		$body .= "wir freuen uns über deine Anmeldung zur Mexicon, der 6. Tübinger Jonglierconvention am 15.9. bis 17.9.!".$eol.$eol;
 		$body .= "Im Anhang findest du ein elektronisches Ticket was du bitte zur Convention ausgedruckt mitbringst.".$eol.$eol;
 		$body .= "Wir freuen uns auf dich,".$eol.$eol;
-		$body .= "i.A. Jonglaria e.V.";
+		$body .= "i.A. Jonglaria e.V.".$eol;
 
 		// attachment
 		$body .= "--" . $separator . $eol;
+		$body .= "Content-Disposition: attachment".$eol;
+		$body .= "Content-Length:".strlen($ticket).$eol;
 		$body .= "Content-Type: application/octet-stream; name=\"mexicon_ticket_" . $this->createUniqueIdentifier($id) . ".pdf\"" . $eol;
-		$body .= "Content-Transfer-Encoding: base64" . $eol;
-		$body .= "Content-Disposition: attachment" . $eol;
-		$body .= $ticketAttachment . $eol;
+		$body .= "Content-Transfer-Encoding: base64".$eol.$eol;
+		$body .= $ticketAttachment.$eol;
 		$body .= "--" . $separator . "--";
 		# Todo Zusatztext für Minderjährige
 		return mail($this->tdb->getEmail($id),$subject,$body,$headers, "-f registration@jonglaria.org");
