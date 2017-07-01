@@ -6,11 +6,15 @@ require_once("ticketdb.php");
 class Ticket
 {
 	private $salt = "ksajdfz26kadfls8";
-	private	$tdb = new TicketDatabase();
+	private	$tdb = "";
+	public function __construct()
+	{
+		$this->tdb = new TicketDatabase();
+	}
 
 	public function createUniqueIdentifier($id)
 	{
-		return substr(md5($id.$salt),1,8);
+		return substr(md5($id.$this->salt),1,8);
 	}
 
 	public function sendConfirmationMail($id, $subject, $body_before_url, $body_after_url, $url_base)
@@ -27,11 +31,11 @@ class Ticket
 	public function createElectronicTicket($id)
 	{
 		# Todo multiple return values?
-		$exec_string = "LD_LIBRARY_PATH=$(pwd):$LD_LIBRARY_PATH ./example1";
-		$exec_string .= " -1\"".$tdb->getFirstName($id)."\"";	
-		$exec_string .= " -2\"".$tdb->getFamilyName($id)."\"";
-		$exec_string .= " -b\"".$tdb->getBirthDate($id)."\"";
-		$supervisor = $tdb->getSuperVisor($id);
+		$exec_string = "LD_LIBRARY_PATH=$(pwd):\$LD_LIBRARY_PATH ./example1";
+		$exec_string .= " -1\"".$this->tdb->getFirstName($id)."\"";	
+		$exec_string .= " -2\"".$this->tdb->getFamilyName($id)."\"";
+		$exec_string .= " -b\"".$this->tdb->getBirthDate($id)."\"";
+		$supervisor = $this->tdb->getSuperVisor($id);
 		if($supervisor != "")
 		{
 			$exec_string .= " -s\"".$supervisor."\"";
@@ -77,7 +81,7 @@ class Ticket
 		$body = "--" . $separator . $eol;
 		$body .= "Content-Type: text/plain; charset=\"utf-8\"".$eol;
 		$body .= "Content-Transfer-Encoding: 8bit".$eol;
-		$body .= "Hallo ".$tdb->getFirstName($id)." ".$tdb->getFamilyName($id).",".$eol.$eol;
+		$body .= "Hallo ".$this->tdb->getFirstName($id)." ".$this->tdb->getFamilyName($id).",".$eol.$eol;
 		$body .= "wir freuen uns über deine Anmeldung zur Mexicon, der 6. Tübinger Jonglierconvention am 15.9. bis 17.9.!".$eol.$eol;
 		$body .= "Im Anhang findest du ein elektronisches Ticket was du bitte zur Convention ausgedruckt mitbringst.".$eol.$eol;
 		$body .= "Wir freuen uns auf dich,".$eol.$eol;
@@ -85,13 +89,13 @@ class Ticket
 
 		// attachment
 		$body .= "--" . $separator . $eol;
-		$body .= "Content-Type: application/octet-stream; name=\"" . $filename . "\"" . $eol;
+		$body .= "Content-Type: application/octet-stream; name=\"mexicon_ticket_" . $this->createUniqueIdentifier($id) . ".pdf\"" . $eol;
 		$body .= "Content-Transfer-Encoding: base64" . $eol;
 		$body .= "Content-Disposition: attachment" . $eol;
 		$body .= $ticketAttachment . $eol;
 		$body .= "--" . $separator . "--";
 		# Todo Zusatztext für Minderjährige
-		return mail($tdb->getEmail($id),$subject,$body,$headers, "-f registration@jonglaria.org");
+		return mail($this->tdb->getEmail($id),$subject,$body,$headers, "-f registration@jonglaria.org");
 		// file_put_contents("work.pdf", $ticketAttachment);
 
 	}
