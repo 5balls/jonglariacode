@@ -6,6 +6,7 @@ require_once("ticketdb.php");
 class Ticket
 {
 	private $salt = "ksajdfz26kadfls8";
+	private $conf_salt = "ölrka2139asduc";
 	private	$tdb = "";
 	public function __construct()
 	{
@@ -16,16 +17,28 @@ class Ticket
 	{
 		return substr(md5($id.$this->salt),1,8);
 	}
-
-	public function sendConfirmationMail($id, $subject, $body_before_url, $body_after_url, $url_base)
+	public function createUniqueIdentifierConfirmation($mail_address)
 	{
-		$mail_address = getMailAddress($id);
-		$body = $body_before_url;
-		$body .= $url_base;
-		$body .= "?mail=".urlencode(trim($mail_adress));
-		$body .= "&id=".urlencode(md5($id.$salt));
-		$body .= $body_after_url;
-		return mail($mailadress, $subject, $body);
+		return substr(md5($mail_address.$this->conf_salt),1,8);
+	}
+
+	public function sendConfirmationMail($id)
+	{
+		$eol = "\r\n";
+		$mail_address = $this->tdb->getEmail($id);
+		$headers = "From: Mexicon <registration@jonglaria.org>".$eol;
+		$headers .= "MIME-Version: 1.0".$eol;
+		$subject = "Mexicon - Bestätigung Emailadresse";
+		$body .= "Hallo ".$this->tdb->getFirstName($id)." ".$this->tdb->getFamilyName($id).",".$eol.$eol;
+		$body .= "wir freuen uns über dein Interesse an der Mexicon, der 6. Tübinger Jonglierconvention am 15.9. bis 17.9.!".$eol.$eol;
+		$body .= "Damit wir wissen, dass du dich bei der Emailadresse nicht vertippt hast klicke bitte auf folgenden Bestätigunglink, wir werden dir anschließend eine Email mit den Überweisungsinformationen zuschicken:".$eol.$eol;
+		$body .= "https://jonglaria.org/mexicon/emailconf/";
+		$body .= "?mail=".urlencode(trim($mail_address));
+		$body .= "&id=".urlencode($id);
+		$body .= "&check=".urlencode($this->createUniqueIdentifierConfirmation(trim($mail_address))).$eol.$eol;
+		$body .= "Wir freuen uns auf dich,".$eol.$eol;
+		$body .= "i.A. Jonglaria e.V.".$eol;
+		return mail($mail_address,$subject,$body,$headers, "-f registration@jonglaria.org");
 	}
 
 	public function createElectronicTicket($id)
