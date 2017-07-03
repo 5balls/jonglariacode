@@ -21,6 +21,18 @@ class Ticket
 	{
 		return substr(md5($mail_address.$this->conf_salt),1,8);
 	}
+	// Remember to urldecode mail before using function
+	public function checkMail($mail_address, $check)
+	{
+		if($this->createUniqueIdentifierConfirmation(trim($mail_address)) == $check)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 	public function sendConfirmationMail($id)
 	{
