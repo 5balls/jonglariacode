@@ -7,8 +7,10 @@ include("inc/database.inc.php");
 include("inc/validateDate.inc.php");
 include("inc/getZip.inc.php");
 include("inc/getAge.inc.php");
+require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/dynamic/ticket.php");
 
 $DB = new Database("mexicon");  
+$ticket = new Ticket;
 
 $res = $DB->query("SELECT * FROM `convention` WHERE `active` = 1;");
 $numreg = $DB->num_rows($res);
@@ -142,6 +144,9 @@ if ( isset($_POST['reg']) ) {
         $sql .= "'". $DB->escape_string($_POST['cg_birthday']) ."');";
         $DB->query($sql);
       }
+
+      // send confirmation email
+      $ticket->sendConfirmationMail($person['id'])
     }
 
 ?>

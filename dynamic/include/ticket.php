@@ -41,6 +41,8 @@ class Ticket
 
 	public function sendConfirmationMail($id)
 	{
+    $regcode = $this->createUniqueIdentifierConfirmation(trim($mail_address));
+    $this->tdb->insertRegCode($regcode, $id);
 		$eol = "\r\n";
 		$mail_address = $this->tdb->getEmail($id);
 		$headers = "From: Mexicon <registration@jonglaria.org>".$eol;
@@ -52,13 +54,15 @@ class Ticket
 		$body .= "https://jonglaria.org/mexicon/emailconf/";
 		$body .= "?mail=".urlencode(trim($mail_address));
 		$body .= "&id=".urlencode($id);
-		$body .= "&check=".urlencode($this->createUniqueIdentifierConfirmation(trim($mail_address))).$eol.$eol;
+		$body .= "&check=".urlencode($regcode).$eol.$eol;
 		$body .= "Wir freuen uns auf dich,".$eol.$eol;
 		$body .= "i.A. Jonglaria e.V.".$eol;
 		return mail($mail_address,$subject,$body,$headers, "-f registration@jonglaria.org");
 	}
 	public function sendPaymentMail($id)
 	{
+    $paycode = $this->createUniqueIdentifierPayment($id);
+    $this->tdb->insertPayCode($paycode, $id);
 		$eol = "\r\n";
 		$mail_address = $this->tdb->getEmail($id);
 		$headers = "From: Mexicon <registration@jonglaria.org>".$eol;
@@ -72,7 +76,7 @@ class Ticket
 		$body .= "Empfänger: Jonglaria e.V.".$eol;
 		$body .= "Konto: DE15 6415 0020 0001 1490 32".$eol;
 		$body .= "Betrag: ".$this->tdb->getCosts($id)." EUR".$eol;
-		$body .= "Betreff: \"MEXICON ".$this->createUniqueIdentifierPayment($id)."\"".$eol.$eol;
+		$body .= "Betreff: \"MEXICON ".$paycode."\"".$eol.$eol;
 		$body .= "Sobald wir den Eingang des Geldes festgestellt haben, schicken wir dir ein elektronisches Ticket, was du ausdrucken und zur Convention mitbringen kannst.".$eol.$eol;
 		$body .= "Wir freuen uns auf dich,".$eol.$eol;
 		$body .= "i.A. Jonglaria e.V.".$eol;

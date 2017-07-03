@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 
 // ############ BASEDIR ############ //
 define('BASEDIR', '/jonglaria/mexicon');
+define('HIDDENDIR', '/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden');
 
 // ############ CHARSET ############ //
 // utf-8 // iso-8859-1

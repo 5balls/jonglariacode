@@ -21,13 +21,29 @@ class TicketDatabase
 		if(($id != $current_id) || ($current_id == 0))
 		{
 			$current_id = $id;
-			$res = $this->db->query("SELECT * FROM `person` JOIN `convention` ON `person`.`id` = `convention`.`id`;");
+			$res = $this->db->query("SELECT * FROM `person` JOIN `convention` ON `person`.`id` = `convention`.`id` WHERE `id` = '".$id."';");
 			$this->id_info = $this->db->fetch_assoc($res);
 			$res_cg = $this->db->query("SELECT * FROM `caregiver` WHERE `id` = '".$id."'");
 			$this->caregiver = $this->db->fetch_assoc($res_cg);
 			if(!$this->caregiver) $this->caregiver=null;
 		}
 	}
+  public function insertRegCode($code, $id) 
+  {
+    $sql = "INSERT person(";
+    $sql .= "regcode) VALUES (";
+    $sql .= "'". $code ."')";
+    $sql .= "WHERE `id` = '".$id."';";
+    $this->db->query($sql);
+  }
+  public function insertPayCode($code, $id) 
+  {
+    $sql = "INSERT person(";
+    $sql .= "paycode) VALUES (";
+    $sql .= "'". $code ."')";
+    $sql .= "WHERE `id` = '".$id."';";
+    $this->db->query($sql);
+  }
 	public function getFirstName($id)
 	{
 		$this->refreshInformation($id);	
