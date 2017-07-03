@@ -4,6 +4,7 @@ namespace Jonglaria;
 
 require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/config/mexicon/config.php");
 require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/dynamic/convention/database.inc.php");
+require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/dynamic/convention/getAge.inc.php");
 
 class TicketDatabase
 {
@@ -63,6 +64,15 @@ class TicketDatabase
 	{
 		$this->refreshInformation($id);	
 		return $this->id_info['email'];
+	}
+	public function getAge($id)
+	{
+		$this->refreshInformation($id);
+		return \getAgeConvention($this->id_info['birthday']);
+	}
+	public function getCosts($id)
+	{
+		return "1000";
 	}
 }
 ?>

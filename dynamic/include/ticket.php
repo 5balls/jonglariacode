@@ -7,6 +7,7 @@ class Ticket
 {
 	private $salt = "ksajdfz26kadfls8";
 	private $conf_salt = "ölrka2139asduc";
+	private $pay_salt = "iwebrkc-7391mql";
 	private	$tdb = "";
 	public function __construct()
 	{
@@ -16,6 +17,10 @@ class Ticket
 	public function createUniqueIdentifier($id)
 	{
 		return substr(md5($id.$this->salt),1,8);
+	}
+	public function createUniqueIdentifierPayment($id)
+	{
+		return substr(md5($id.$this->pay_salt),1,8);
 	}
 	public function createUniqueIdentifierConfirmation($mail_address)
 	{
@@ -52,7 +57,27 @@ class Ticket
 		$body .= "i.A. Jonglaria e.V.".$eol;
 		return mail($mail_address,$subject,$body,$headers, "-f registration@jonglaria.org");
 	}
-
+	public function sendPaymentMail($id)
+	{
+		$eol = "\r\n";
+		$mail_address = $this->tdb->getEmail($id);
+		$headers = "From: Mexicon <registration@jonglaria.org>".$eol;
+		$headers .= "MIME-Version: 1.0".$eol;
+		$subject = "Mexicon - Überweisungsinformationen";
+		$body .= "Hallo ".$this->tdb->getFirstName($id)." ".$this->tdb->getFamilyName($id).",".$eol.$eol;
+		$body .= "wir freuen uns über deine Anmeldung an der Mexicon, der 6. Tübinger Jonglierconvention am 15.9. bis 17.9.!".$eol.$eol;
+		$body .= "Um deine Anmeldung zu vervollständigen, bitte überweise den Betrag von".$eol.$eol;
+		$body .= $this->tdb->getCosts($id)." Euro (Betrag für ".$this->tdb->getAge($id)." Jahre alten Teilnehmer)".$eol.$eol;
+		$body .= "innerhalb von spätestens 10 Tagen auf folgendes Konto:".$eol.$eol;
+		$body .= "Empfänger: Jonglaria e.V.".$eol;
+		$body .= "Konto: DE15 6415 0020 0001 1490 32".$eol;
+		$body .= "Betrag: ".$this->tdb->getCosts($id)." EUR".$eol;
+		$body .= "Betreff: \"MEXICON ".$this->createUniqueIdentifierPayment($id)."\"".$eol.$eol;
+		$body .= "Sobald wir den Eingang des Geldes festgestellt haben, schicken wir dir ein elektronisches Ticket, was du ausdrucken und zur Convention mitbringen kannst.".$eol.$eol;
+		$body .= "Wir freuen uns auf dich,".$eol.$eol;
+		$body .= "i.A. Jonglaria e.V.".$eol;
+		return mail($mail_address,$subject,$body,$headers, "-f registration@jonglaria.org");
+	}
 	public function createElectronicTicket($id)
 	{
 		# Todo multiple return values?
