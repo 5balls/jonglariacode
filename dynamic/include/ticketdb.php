@@ -72,7 +72,20 @@ class TicketDatabase
 	}
 	public function getCosts($id)
 	{
-		return "1000";
+		$age = $this->getAge($id);
+		if($age < 12)
+		{
+			// Todo: We need to handle this specially:
+			return "0";
+		}
+		else if($age <= 16)
+		{
+			return "20";
+		}
+		else
+		{
+			return "28";
+		}
 	}
 }
 ?>
