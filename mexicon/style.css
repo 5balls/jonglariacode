@@ -71,7 +71,7 @@ table.datatable {
   margin-right 5%;
   border-collapse: collapse;
 }
-table.datatable td { 
+table.datatable td,th { 
   border: 2px solid #ddd;
   padding: 5px;
   text-align: left;

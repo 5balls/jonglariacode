@@ -1,16 +1,16 @@
-<?php // index.php
+<?php 
 
 session_start(); 
 
-include("config/config.php");
-include("inc/database.inc.php");
-include("inc/validateDate.inc.php");
-include("inc/getZip.inc.php");
-include("inc/getAge.inc.php");
+require_once("config/config.php");
+require_once("inc/database.inc.php");
+require_once("inc/validateDate.inc.php");
+require_once("inc/getZip.inc.php");
+require_once("inc/getAge.inc.php");
 require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/dynamic/ticket.php");
 
-$DB = new Database("mexicon");  
-$ticket = new Ticket;
+$DB = new Database("db1110266-jonglaria");  
+$ticket = new Jonglaria\Ticket;
 
 $res = $DB->query("SELECT * FROM `convention` WHERE `active` = 1;");
 $numreg = $DB->num_rows($res);
@@ -78,7 +78,7 @@ if ( isset($_POST['reg']) ) {
       && $DB->escape_string($_POST['email']) != ""
       && filter_var($DB->escape_string($_POST['email']), FILTER_VALIDATE_EMAIL)
       && (getAgeConvention($DB->escape_string($_POST['birthday'])) >= 18
-        || (getAgeConvention($DB->escape_string($_POST['birthday'])) > 6 
+        || (getAgeConvention($DB->escape_string($_POST['birthday'])) > 12 
           && $DB->escape_string($_POST['cg_surname']) != "" 
           && $DB->escape_string($_POST['cg_prename']) != "" 
           && validateDate($DB->escape_string($_POST['cg_birthday']), 'Y-m-d')
@@ -146,14 +146,14 @@ if ( isset($_POST['reg']) ) {
       }
 
       // send confirmation email
-      $ticket->sendConfirmationMail($person['id'])
+      $ticket->sendConfirmationMail($person['id']);
     }
 
 ?>
 <div id='main'>
   <div class='center'>
-    Dein Conventionticket ist für dich reserviert. <br />
-    Hinweis: Das Conventionticket ist gleichzeitig auch ein Ticket für die Galashow.
+    Wir haben dir eine Email geschickt mit einem Link zur Bestätigung deiner Emailadresse. <br />
+    Solltest du keine Email erhalten haben und sicher sein, keinen Tippfehler gemacht zu haben, kontaktiere uns bitte unter reghelp@jonglaria.org
     <br />
     <br />
     <a href='<?php echo $_SERVER['REQUEST_URI'] ?>'>Zum Registrierungsformular</a>
@@ -180,14 +180,20 @@ if (!isset($_POST['reg']) || !isset($_POST['captcha'])) {
 <div id='main'>
   <div class='center'>
     Anzahl noch verfügbarer Tickets: <b> <?php echo $numfree; ?> </b> <br />
+<table class='datatable'>
+<tr><th>Alter bei Convention</th><th>Conventionpreis (inklusive Galashow) bei Vorüberweisung</th></tr>
+<tr><td>jünger als 12 Jahre</td><td>kostenlos!</td></tr>
+<tr><td>12 bis 16 Jahre</td><td>20 Euro</td></tr>
+<tr><td>über 16 Jahre</td><td>28 Euro</td></tr>
+</table>
     <br />
 <?php if(isset($_POST['reg'])) { ?>
     <font color='#ff0000'>Achtung!</font>
     <br />
 <?php   if (validateDate($_POST['birthday'], 'Y-m-d')) { ?>
-<?php     if(getAgeConvention($DB->escape_string($_POST['birthday'])) < 6) { ?>
-    Du musst über 6 Jahre alt sein um die für die Convention zu registrieren! 
-    Bist Du unter 6 Jahre alt ist der Eintritt frei und deswegen keine Registrierung notwendig. <br />
+<?php     if(getAgeConvention($DB->escape_string($_POST['birthday'])) < 12) { ?>
+    Du musst über 12 Jahre alt sein um dich für die Convention zu registrieren! 
+    Bist Du unter 12 Jahre alt ist der Eintritt frei und deswegen keine Registrierung notwendig. <br />
 <?php     } else if(getAgeConvention($DB->escape_string($_POST['birthday'])) < 18) { ?>
 <?php       $youth=true; ?>
     Du bist unter 18 und musst deshalb eine Bezugsperson angeben 
@@ -207,7 +213,7 @@ if (!isset($_POST['reg']) || !isset($_POST['captcha'])) {
       <tr><td>Nachname</td><td><input type='text' name='surname' value='<?php if(isset($_POST['surname'])) echo $_POST['surname']; ?>' maxlength='100' size='30' /></td></tr>
       <tr><td>Geburtstag</td><td><input type='text' name='birthday' value='<?php echo $birthdayvalue; ?>' maxlength='10' size='30' /></td></tr>
       <tr><td>E-Mail</td><td><input type='text' name='email' value='<?php if(isset($_POST['email'])) echo $_POST['email']; ?>' maxlength='100' size='30' /></td></tr>
-      <tr><td>&#9972;</td><td ><input type='checkbox' name='boat' <?php if (isset($_POST['boat'])) echo "checked"; ?> /></td></tr>
+      <tr><td>&#9972; Interesse Stocherkahnfahrt?</td><td ><input type='checkbox' name='boat' <?php if (isset($_POST['boat'])) echo "checked"; ?> /></td></tr>
 <?php if(isset($youth)) { ?>
       <tr><td>&#9937; Vorname</td><td><input type='text' name='cg_prename' value='<?php if(isset($_POST['cg_prename'])) echo $_POST['cg_prename']; ?>' maxlength='100' size='30' /></td></tr>
       <tr><td>&#9937; Nachname</td><td><input type='text' name='cg_surname' value='<?php if(isset($_POST['cg_surname'])) echo $_POST['cg_surname']; ?>' maxlength='100' size='30' /></td></tr>
