@@ -41,10 +41,10 @@ class Ticket
 
 	public function sendConfirmationMail($id)
 	{
-    $regcode = $this->createUniqueIdentifierConfirmation(trim($mail_address));
-    $this->tdb->insertRegCode($regcode, $id);
 		$eol = "\r\n";
 		$mail_address = $this->tdb->getEmail($id);
+		$regcode = $this->createUniqueIdentifierConfirmation(trim($mail_address));
+		$this->tdb->insertRegCode($regcode, $id);
 		$headers = "From: Mexicon <registration@jonglaria.org>".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
 		$subject = "Mexicon - Bestätigung Emailadresse";
@@ -61,8 +61,8 @@ class Ticket
 	}
 	public function sendPaymentMail($id)
 	{
-    $paycode = $this->createUniqueIdentifierPayment($id);
-    $this->tdb->insertPayCode($paycode, $id);
+		$paycode = $this->createUniqueIdentifierPayment($id);
+		$this->tdb->insertPayCode($paycode, $id);
 		$eol = "\r\n";
 		$mail_address = $this->tdb->getEmail($id);
 		$headers = "From: Mexicon <registration@jonglaria.org>".$eol;

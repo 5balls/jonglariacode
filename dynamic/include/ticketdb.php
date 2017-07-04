@@ -3,8 +3,8 @@
 namespace Jonglaria;
 
 require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/config/mexicon/config.php");
-require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/dynamic/convention/database.inc.php");
-require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/dynamic/convention/getAge.inc.php");
+require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglaria/mexicon/inc/database.inc.php");
+require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglaria/mexicon/inc/getAge.inc.php");
 
 class TicketDatabase
 {
@@ -21,29 +21,27 @@ class TicketDatabase
 		if(($id != $current_id) || ($current_id == 0))
 		{
 			$current_id = $id;
-			$res = $this->db->query("SELECT * FROM `person` JOIN `convention` ON `person`.`id` = `convention`.`id` WHERE `id` = '".$id."';");
+			$res = $this->db->query("SELECT * FROM `person` JOIN `convention` ON `person`.`id` = `convention`.`id` WHERE `person`.`id` = '".$id."';");
 			$this->id_info = $this->db->fetch_assoc($res);
-			$res_cg = $this->db->query("SELECT * FROM `caregiver` WHERE `id` = '".$id."'");
+			$res_cg = $this->db->query("SELECT * FROM `caregiver` WHERE `id` = '".$id."';");
 			$this->caregiver = $this->db->fetch_assoc($res_cg);
 			if(!$this->caregiver) $this->caregiver=null;
 		}
 	}
-  public function insertRegCode($code, $id) 
-  {
-    $sql = "INSERT person(";
-    $sql .= "regcode) VALUES (";
-    $sql .= "'". $code ."')";
-    $sql .= "WHERE `id` = '".$id."';";
-    $this->db->query($sql);
-  }
-  public function insertPayCode($code, $id) 
-  {
-    $sql = "INSERT person(";
-    $sql .= "paycode) VALUES (";
-    $sql .= "'". $code ."')";
-    $sql .= "WHERE `id` = '".$id."';";
-    $this->db->query($sql);
-  }
+	public function insertRegCode($code, $id) 
+	{
+		$sql = "UPDATE convention ";
+		$sql .= "SET regcode = '".$code;
+		$sql .= "' WHERE id = '".$id."';";
+		$this->db->query($sql);
+	}
+	public function insertPayCode($code, $id) 
+	{
+		$sql = "UPDATE convention ";
+		$sql .= "SET paycode = '".$code;
+		$sql .= "' WHERE id = '".$id."';";
+		$this->db->query($sql);
+	}
 	public function getFirstName($id)
 	{
 		$this->refreshInformation($id);	
@@ -69,7 +67,7 @@ class TicketDatabase
 		$this->refreshInformation($id);	
 		if($this->caregiver != null)
 		{
-			return $this->caregiver;
+			return $this->caregiver['prename']." ".$this->caregiver['surname'];
 		}
 		else
 		{
