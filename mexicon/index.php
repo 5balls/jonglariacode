@@ -70,7 +70,19 @@ if ( isset($_POST['reg']) ) {
       $DB->query($sql);
     }
   }
-
+/*
+print "<h1>Debug</h1>";
+print "<p>captcha set?:".strval(isset($_SESSION['captcha']))."</p>";
+print "<p>captcha valid?:".strval((bool)(strtolower($_POST['captcha']) == strtolower($_SESSION['captcha'])))."</p>";
+print "<p>valid birthday?:".strval(validateDate($DB->escape_string($_POST['birthday']), 'Y-m-d'))."</p>";
+print "<p>surname?:".strval($DB->escape_string($_POST['surname']) != "")."</p>";
+print "<p>prename?:".strval($DB->escape_string($_POST['prename']) != "")."</p>";
+print "<p>email?:".strval($DB->escape_string($_POST['email']) != "")."</p>";
+print "<p>valid email?".strval(filter_var($DB->escape_string($_POST['email']), FILTER_VALIDATE_EMAIL))."</p>";
+print "<p>birthday:".strval(getAgeConvention($DB->escape_string($_POST['birthday'])))."</p>";
+print "<p>older than 18?:".strval((bool)(getAgeConvention($DB->escape_string($_POST['birthday'])) >= 18))."</p>";
+print "<p>older equal 6?:".strval((bool)(getAgeConvention($DB->escape_string($_POST['birthday'])) >= 6 ))."</p>";
+*/
   if (isset($_SESSION['captcha']) && strtolower($_POST['captcha']) == strtolower($_SESSION['captcha'])
       && validateDate($DB->escape_string($_POST['birthday']), 'Y-m-d')
       && $DB->escape_string($_POST['surname']) != ""
@@ -78,7 +90,7 @@ if ( isset($_POST['reg']) ) {
       && $DB->escape_string($_POST['email']) != ""
       && filter_var($DB->escape_string($_POST['email']), FILTER_VALIDATE_EMAIL)
       && (getAgeConvention($DB->escape_string($_POST['birthday'])) >= 18
-        || (getAgeConvention($DB->escape_string($_POST['birthday'])) > 6 
+        || (getAgeConvention($DB->escape_string($_POST['birthday'])) >= 6 
           && $DB->escape_string($_POST['cg_surname']) != "" 
           && $DB->escape_string($_POST['cg_prename']) != "" 
           && validateDate($DB->escape_string($_POST['cg_birthday']), 'Y-m-d')
