@@ -49,6 +49,7 @@ class Ticket
 		$regcode = $this->createUniqueIdentifierConfirmation(trim($mail_address));
 		$this->tdb->insertRegCode($regcode, $id);
 		$headers = "From: Mexicon <registration@jonglaria.org>".$eol;
+		$headers .= "Cc: regcc@jonglaria.org".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
 		$headers .= "Content-Type: text/plain; charset=\"utf-8\"".$eol;
 		$headers .= "Content-Transfer-Encoding: 8bit".$eol;
@@ -72,6 +73,7 @@ class Ticket
 		$regcode = $this->createUniqueIdentifierConfirmation(trim($mail_address));
 		$this->tdb->insertRegCodeGala($regcode, $id);
 		$headers = "From: \"Tübinger Fröschle\" <registration@jonglaria.org>".$eol;
+		$headers .= "Cc: regcc@jonglaria.org".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
 		$headers .= "Content-Type: text/plain; charset=\"utf-8\"".$eol;
 		$headers .= "Content-Transfer-Encoding: 8bit".$eol;
@@ -97,6 +99,7 @@ class Ticket
 		$eol = "\r\n";
 		$mail_address = $this->tdb->getEmail($id);
 		$headers = "From: Mexicon <registration@jonglaria.org>".$eol;
+		$headers .= "Cc: regcc@jonglaria.org".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
 		$headers .= "Content-Type: text/plain; charset=\"utf-8\"".$eol;
 		$headers .= "Content-Transfer-Encoding: 8bit".$eol;
@@ -123,6 +126,7 @@ class Ticket
 		$eol = "\r\n";
 		$mail_address = $this->tdb->getEmail($id);
 		$headers = "From: \"Tübinger Fröschle\" <registration@jonglaria.org>".$eol;
+		$headers .= "Cc: regcc@jonglaria.org".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
 		$headers .= "Content-Type: text/plain; charset=\"utf-8\"".$eol;
 		$headers .= "Content-Transfer-Encoding: 8bit".$eol;
@@ -227,6 +231,7 @@ class Ticket
 		$ticketAttachment = chunk_split(base64_encode($ticket));
 		$eol = "\r\n";
 		$headers = "From: Mexicon <registration@jonglaria.org>".$eol;
+		$headers .= "Cc: regcc@jonglaria.org".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
 		$headers .= "Content-Type: multipart/mixed; boundary=\"".$separator."\"".$eol;
 		$headers .= "Content-Transfer-Encoding: 7bit".$eol;
@@ -266,6 +271,7 @@ class Ticket
 		$ticketAttachment = chunk_split(base64_encode($ticket));
 		$eol = "\r\n";
 		$headers = "From: \"Tübinger Fröschle\" <registration@jonglaria.org>".$eol;
+		$headers .= "Cc: regcc@jonglaria.org".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
 		$headers .= "Content-Type: multipart/mixed; boundary=\"".$separator."\"".$eol;
 		$headers .= "Content-Transfer-Encoding: 7bit".$eol;
