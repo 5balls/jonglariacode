@@ -38,6 +38,10 @@ class Ticket
 			return false;
 		}
 	}
+	public function utf8base64encode($string)
+	{
+		return "=?utf-8?B?".base64_encode($string)."?=";
+	}
 	public function sendConfirmationMail($id)
 	{
 		$eol = "\r\n";
@@ -47,6 +51,7 @@ class Ticket
 		$headers = "From: Mexicon <registration@jonglaria.org>".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
 		$subject = "Mexicon - Bestätigung Emailadresse";
+		$subject = $this->utf8base64encode($subject);
 		$body .= "Hallo ".$this->tdb->getFirstName($id)." ".$this->tdb->getFamilyName($id).",".$eol.$eol;
 		$body .= "wir freuen uns über dein Interesse an der Mexicon, der 6. Tübinger Jonglierconvention am 15.9. bis 17.9.!".$eol.$eol;
 		$body .= "Damit wir wissen, dass du dich bei der Emailadresse nicht vertippt hast klicke bitte auf folgenden Bestätigunglink, wir werden dir anschließend eine Email mit den Überweisungsinformationen zuschicken:".$eol.$eol;
@@ -56,6 +61,7 @@ class Ticket
 		$body .= "&check=".urlencode($regcode).$eol.$eol;
 		$body .= "Wir freuen uns auf dich,".$eol.$eol;
 		$body .= "i.A. Jonglaria e.V.".$eol;
+		$body = $this->utf8base64encode($body);
 		return mail($mail_address,$subject,$body,$headers, "-f registration@jonglaria.org");
 	}
 	public function sendConfirmationMailGala($id)
