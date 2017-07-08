@@ -2,13 +2,15 @@
 
 session_start(); 
 
-include("../config/config.php");
-include("../inc/database.inc.php");
-include("../inc/validateDate.inc.php");
-include("../inc/getZip.inc.php");
-include("../inc/getAge.inc.php");
+require_once("../config/config.php");
+require_once("../inc/database.inc.php");
+require_once("../inc/validateDate.inc.php");
+require_once("../inc/getZip.inc.php");
+require_once("../inc/getAge.inc.php");
+require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/dynamic/ticket.php");
 
-$DB = new Database("mexicon");  
+$DB = new Database("db1110266-jonglaria");  
+$ticket = new Jonglaria\Ticket;
 
 $res = $DB->query("SELECT * FROM `galashow` WHERE `active` = 1;");
 $numreg = $DB->num_rows($res);
@@ -26,7 +28,7 @@ $numfree = GALASLOTS - $numreg;
 </head>
 <body>
 <div id='header'>
-  <h1>Galashow der 6. Tübinger Jonglierconvention</h1>
+  <h1>Adi Pius Kläger Kleinkunstpreis Tübinger Fröschle</h1>
   <h2>16. September 2017</h2>
   <h3>Tickets</h3> 
 </div>
@@ -103,12 +105,15 @@ if ( isset($_POST['reg']) ) {
       $sql .= "'". $DB->escape_string($_POST['ticketcount']) ."'";
       $sql .= ");";
       $DB->query($sql);
+
+      $ticket->sendConfirmationMailGala($person['id']);
     }
 
 ?>
 <div id='main'>
   <div class='center'>
-    Dein Ticket für die Galashow ist reserviert.
+    Wir haben dir eine Email geschickt mit einem Link zur Bestätigung deiner Emailadresse. <br />
+    Solltest du keine Email erhalten haben und sicher sein, keinen Tippfehler gemacht zu haben, kontaktiere uns bitte unter reghelp@jonglaria.org
     <br />
     <br />
     <a href='<?php echo $_SERVER['REQUEST_URI'] ?>'>Zum Ticketformular</a>

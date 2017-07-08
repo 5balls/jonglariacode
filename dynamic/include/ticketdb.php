@@ -35,9 +35,23 @@ class TicketDatabase
 		$sql .= "' WHERE id = '".$id."';";
 		$this->db->query($sql);
 	}
+	public function insertRegCodeGala($code, $id) 
+	{
+		$sql = "UPDATE galashow ";
+		$sql .= "SET regcode = '".$code;
+		$sql .= "' WHERE id = '".$id."';";
+		$this->db->query($sql);
+	}
 	public function insertPayCode($code, $id) 
 	{
 		$sql = "UPDATE convention ";
+		$sql .= "SET paycode = '".$code;
+		$sql .= "' WHERE id = '".$id."';";
+		$this->db->query($sql);
+	}
+	public function insertPayCodeGala($code, $id) 
+	{
+		$sql = "UPDATE galashow ";
 		$sql .= "SET paycode = '".$code;
 		$sql .= "' WHERE id = '".$id."';";
 		$this->db->query($sql);
@@ -100,6 +114,20 @@ class TicketDatabase
 		{
 			return "28";
 		}
+	}
+	// Todo Might add caching later if we need more than one information from database galashow:
+	public function getNumberOfTickets($id)
+	{
+		$res = $this->db->query("SELECT * FROM `person` JOIN `galashow` ON `person`.`id` = `galashow`.`id` WHERE `person`.`id` = '".$id."';");
+		$gala_info = $this->db->fetch_assoc($res);
+		return $gala_info['ticketcount'];
+	}
+	// This is only for single gala tickets, gala ticket price is 
+	// included in the convention tickets
+	public function getGalaCosts($id)
+	{
+		// Todo: Galaprice?
+		return strval(($this->getNumberOfTickets($id)*1000));
 	}
 }
 ?>
