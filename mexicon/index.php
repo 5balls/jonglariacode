@@ -78,7 +78,7 @@ if ( isset($_POST['reg']) ) {
       && $DB->escape_string($_POST['email']) != ""
       && filter_var($DB->escape_string($_POST['email']), FILTER_VALIDATE_EMAIL)
       && (getAgeConvention($DB->escape_string($_POST['birthday'])) >= 18
-        || (getAgeConvention($DB->escape_string($_POST['birthday'])) > 12 
+        || (getAgeConvention($DB->escape_string($_POST['birthday'])) > 6 
           && $DB->escape_string($_POST['cg_surname']) != "" 
           && $DB->escape_string($_POST['cg_prename']) != "" 
           && validateDate($DB->escape_string($_POST['cg_birthday']), 'Y-m-d')
@@ -182,18 +182,19 @@ if (!isset($_POST['reg']) || !isset($_POST['captcha'])) {
     Anzahl noch verfügbarer Tickets: <b> <?php echo $numfree; ?> </b> <br />
 <table class='datatable'>
 <tr><th>Alter bei Convention</th><th>Conventionpreis (inklusive Galashow) bei Vorüberweisung</th></tr>
-<tr><td>jünger als 12 Jahre</td><td>kostenlos!</td></tr>
-<tr><td>12 bis 16 Jahre</td><td>20 Euro</td></tr>
-<tr><td>über 16 Jahre</td><td>28 Euro</td></tr>
+<tr><td>jünger als 6 Jahre</td><td>kostenlos!</td></tr>
+<tr><td>6 bis 11 Jahre</td><td>1 Euro pro Lebensjahr</td></tr>
+<tr><td>12 bis 17 Jahre</td><td>20 Euro</td></tr>
+<tr><td>ab 18 Jahre</td><td>28 Euro</td></tr>
 </table>
     <br />
 <?php if(isset($_POST['reg'])) { ?>
     <font color='#ff0000'>Achtung!</font>
     <br />
 <?php   if (validateDate($_POST['birthday'], 'Y-m-d')) { ?>
-<?php     if(getAgeConvention($DB->escape_string($_POST['birthday'])) < 12) { ?>
-    Du musst über 12 Jahre alt sein um dich für die Convention zu registrieren! 
-    Bist Du unter 12 Jahre alt ist der Eintritt frei und deswegen keine Registrierung notwendig. <br />
+<?php     if(getAgeConvention($DB->escape_string($_POST['birthday'])) < 6) { ?>
+    Du musst über 6 Jahre alt sein um dich für die Convention zu registrieren! 
+    Bist Du unter 6 Jahre alt ist der Eintritt frei und deswegen keine Registrierung notwendig. <br />
 <?php     } else if(getAgeConvention($DB->escape_string($_POST['birthday'])) < 18) { ?>
 <?php       $youth=true; ?>
     Du bist unter 18 und musst deshalb eine Bezugsperson angeben 
