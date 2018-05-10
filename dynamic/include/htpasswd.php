@@ -78,4 +78,39 @@ class HtPasswdFile
 		return $atomicHandler->atomicReadWriteAction($fileName, $this, "removeUserHelper", $username);
 	}
 
+	public function changePasswordHelper($fileHandler, $fileName, $args){
+
+		$userName = $args[0];
+		$encryptedPassword = $args[1];
+		$fileContentLines = explode("\n", fread($fileHandler, filesize($fileName)));
+		$newFileContent = "";
+		foreach ($fileContentLines as $fileContentLine)
+		{
+			# Empty line (happens for last line break too):
+			if($fileContentLine=="") continue;
+			# Parse line in the style of "username:password"
+			[$currentUserName, $currentPassword] = explode(':', $fileContentLine);
+			# Add user if not the one which shall be removed
+			if(strcmp($currentUserName, $userName) !== 0){
+				$newFileContent .= $fileContentLine . "\n";
+			}
+			else{
+				$newFileContent .= $userName . ":" . $encryptedPassword . "\n";
+			}
+
+		}
+		$retval = file_put_contents($fileName, $newFileContent);
+		if($retval != FALSE){
+			return True;
+		}
+		else{
+			return False;
+		}
+
+	}
+	public function changePassword($fileName, $userName, $encryptedPassword){
+		$atomicHandler = new AtomicFile();
+		return $atomicHandler->atomicReadWriteAction($fileName, $this, "changePasswordHelper", array($userName, $encryptedPassword));
+	}
+
 }

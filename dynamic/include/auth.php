@@ -41,7 +41,7 @@ class Authorization
 				}
 			}
 			else{
-				throw new \Exception("USER_DOES_NOT_EXISTS");
+				throw new \Exception("USER_DOES_NOT_EXIST");
 			}
 		}
 		else{
@@ -75,6 +75,39 @@ class Authorization
 			}
 			else{
 				throw new \Exception("USER_EXISTS");
+			}
+		}
+		else{
+			throw new \Exception("SERVER_OVERLOAD");
+		}
+	}
+	public function changePassword($username,$cleartextPasswd){
+		$htpasswdHandler = new HtPasswdFile();
+		$retValsUserExists = $htpasswdHandler->userExists(".htusers", $username);
+		if($retValsUserExists[0] == True){
+			# Atomic lock successfull:
+			if($retValsUserExists[1] == True){
+				# User exists (success case!):
+				$encryptedPasswd = $this->encryptPassword($cleartextPasswd);
+				$retValsChangePassword = $htpasswdHandler->changePassword(".htusers", $username, $encryptedPasswd);
+				if($retValsChangePassword[0] == True){
+					# Atomic lock successful:
+					if($retValsChangePassword[1] == True){
+						# Successfully changed password:
+						return True;
+					}
+					else{
+						throw new \Exception("CHANGING_PASSWORD_FAILED");
+					}
+
+
+				}
+				else{
+					throw new \Exception("SERVER_OVERLOAD");
+				}
+			}
+			else{
+				throw new \Exception("USER_DOES_NOT_EXIST");
 			}
 		}
 		else{
