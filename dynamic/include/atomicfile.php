@@ -20,6 +20,35 @@ class AtomicFile
 			return False;
 		}
 	}
+	private function atomicAction($fileName, $callbackClass, $callbackUnderLock, $callBackArgs, $fileOpenType)
+	{
+		$fileHandler = fopen($fileName, $fileOpenType);
+		if(flock($fileHandler, LOCK_EX))
+		{
+			$retval = call_user_func_array(array($callbackClass, $callbackUnderLock), array($fileHandler, $fileName, $callBackArgs));
+
+			flock($fileHandler, LOCK_UN);
+			fclose($fileHandler);
+			return array(True, $retval);
+		}
+		else
+		{
+			fclose($fileHandler);
+			return array(False);
+		}
+	}
+	public function atomicReadAction($fileName, $callbackClass, $callbackUnderLock, $callBackArgs){
+		return $this->atomicAction($fileName, $callbackClass, $callbackUnderLock, $callBackArgs, "r");
+	}
+	public function atomicWriteAction($fileName, $callbackClass, $callbackUnderLock, $callBackArgs){
+		return $this->atomicAction($fileName, $callbackClass, $callbackUnderLock, $callBackArgs, "w");
+	}
+	public function atomicReadWriteAction($fileName, $callbackClass, $callbackUnderLock, $callBackArgs){
+		return $this->atomicAction($fileName, $callbackClass, $callbackUnderLock, $callBackArgs, "r+");
+	}
+	public function atomicAppendAction($fileName, $callbackClass, $callbackUnderLock, $callBackArgs){
+		return $this->atomicAction($fileName, $callbackClass, $callbackUnderLock, $callBackArgs, "a");
+	}
 	public function atomicModifyHtPasswdFile($fileName, $userName, $encryptedPassword)
 	{
 		$fileHandler = fopen($fileName, "r+");
