@@ -10,6 +10,8 @@ class TicketDatabase
 {
 	private $current_id = 0;
 	private $id_info;
+	private $current_id_gala = 0;
+	private $id_info_gala;
 	private $db = null;
 	private $caregiver;
 	public function __construct()
@@ -26,6 +28,15 @@ class TicketDatabase
 			$res_cg = $this->db->query("SELECT * FROM `caregiver` WHERE `id` = '".$id."';");
 			$this->caregiver = $this->db->fetch_assoc($res_cg);
 			if(!$this->caregiver) $this->caregiver=null;
+		}
+	}
+	private function refreshInformationGala($id)
+	{
+		if(($id != $current_id_gala) || ($current_id_gala == 0))
+		{
+			$current_id_gala = $id;
+			$res = $this->db->query("SELECT * FROM `person` JOIN `galashow` ON `person`.`id` = `galashow`.`id` WHERE `person`.`id` = '".$id."';");
+			$this->id_info_gala = $this->db->fetch_assoc($res);
 		}
 	}
 	public function insertRegCode($code, $id) 
@@ -61,16 +72,36 @@ class TicketDatabase
 		$this->refreshInformation($id);	
 		return $this->id_info['prename'];
 	}
+	public function getFirstNameGala($id)
+	{
+		$this->refreshInformationGala($id);	
+		return $this->id_info_gala['prename'];
+	}
 	public function getFamilyName($id)
 	{
 		$this->refreshInformation($id);	
 		return $this->id_info['surname'];
+	}
+	public function getFamilyNameGala($id)
+	{
+		$this->refreshInformationGala($id);	
+		return $this->id_info_gala['surname'];
 	}
 	public function getBirthDate($id)
 	{
 		$this->refreshInformation($id);	
 		// Format birthday nicely:
 		$birthday = new \DateTime($this->id_info['birthday'], new \DateTimeZone('UTC'));
+		$birthday->setTimezone(new \DateTimeZone('Europe/Berlin'));
+		$birthday = $birthday->format("d.m.Y");
+
+		return $birthday;
+	}
+	public function getBirthDateGala($id)
+	{
+		$this->refreshInformationGala($id);	
+		// Format birthday nicely:
+		$birthday = new \DateTime($this->id_info_gala['birthday'], new \DateTimeZone('UTC'));
 		$birthday->setTimezone(new \DateTimeZone('Europe/Berlin'));
 		$birthday = $birthday->format("d.m.Y");
 
@@ -93,10 +124,20 @@ class TicketDatabase
 		$this->refreshInformation($id);	
 		return $this->id_info['email'];
 	}
+	public function getEmailGala($id)
+	{
+		$this->refreshInformationGala($id);	
+		return $this->id_info_gala['email'];
+	}
 	public function getAge($id)
 	{
 		$this->refreshInformation($id);
 		return \getAgeConvention($this->id_info['birthday']);
+	}
+	public function getAgeGala($id)
+	{
+		$this->refreshInformation($id);
+		return \getAgeConvention($this->id_info_gala['birthday']);
 	}
 	public function getCosts($id)
 	{
@@ -121,7 +162,7 @@ class TicketDatabase
 		}
 	}
 	// Todo Might add caching later if we need more than one information from database galashow:
-	public function getNumberOfTickets($id)
+	public function getNumberOfTicketsGala($id)
 	{
 		$res = $this->db->query("SELECT * FROM `person` JOIN `galashow` ON `person`.`id` = `galashow`.`id` WHERE `person`.`id` = '".$id."';");
 		$gala_info = $this->db->fetch_assoc($res);
@@ -129,10 +170,16 @@ class TicketDatabase
 	}
 	// This is only for single gala tickets, gala ticket price is 
 	// included in the convention tickets
-	public function getGalaCosts($id)
+	public function getCostsGala($id)
 	{
 		// Todo: Galaprice?
-		return strval(($this->getNumberOfTickets($id)*1000));
+		return strval(($this->getNumberOfTicketsGala($id)*12));
 	}
+	public function getCostsGalaReduced($id)
+	{
+		// Todo: Galaprice?
+		return strval(($this->getNumberOfTicketsGala($id)*8));
+	}
+
 }
 ?>

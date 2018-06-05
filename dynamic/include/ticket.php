@@ -69,17 +69,17 @@ class Ticket
 	public function sendConfirmationMailGala($id)
 	{
 		$eol = "\r\n";
-		$mail_address = $this->tdb->getEmail($id);
+		$mail_address = $this->tdb->getEmailGala($id);
 		$regcode = $this->createUniqueIdentifierConfirmation(trim($mail_address));
 		$this->tdb->insertRegCodeGala($regcode, $id);
-		$headers = "From: \"Tübinger Fröschle\" <registration@jonglaria.org>".$eol;
+		$headers = "From: \"".$this->utf8base64encode("Tübinger Fröschle")."\" <registration@jonglaria.org>".$eol;
 		$headers .= "Cc: regcc@jonglaria.org".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
 		$headers .= "Content-Type: text/plain; charset=\"utf-8\"".$eol;
 		$headers .= "Content-Transfer-Encoding: 8bit".$eol;
 		$subject = "Tübinger Fröschle - Bestätigung Emailadresse";
 		$subject = $this->utf8base64encode($subject);
-		$body .= "Hallo ".$this->tdb->getFirstName($id)." ".$this->tdb->getFamilyName($id).",".$eol.$eol;
+		$body .= "Hallo ".$this->tdb->getFirstNameGala($id)." ".$this->tdb->getFamilyNameGala($id).",".$eol.$eol;
 		$body .= "wir freuen uns über dein Interesse an dem Adi Pius Kläger Kleinkunstpreis Tübinger Fröschle am 16.9.!".$eol.$eol;
 		$body .= "Damit wir wissen, dass du dich bei der Emailadresse nicht vertippt hast klicke bitte auf folgenden Bestätigunglink, wir werden dir anschließend eine Email mit den Überweisungsinformationen zuschicken:".$eol.$eol;
 		$body .= "https://jonglaria.org/mexicon/gala/emailconf/";
@@ -124,24 +124,26 @@ class Ticket
 		$paycode = $this->createUniqueIdentifierPayment($id);
 		$this->tdb->insertPayCodeGala($paycode, $id);
 		$eol = "\r\n";
-		$mail_address = $this->tdb->getEmail($id);
-		$headers = "From: \"Tübinger Fröschle\" <registration@jonglaria.org>".$eol;
+		$mail_address = $this->tdb->getEmailGala($id);
+		$headers = "From: \"".$this->utf8base64encode("Tübinger Fröschle")."\" <registration@jonglaria.org>".$eol;
 		$headers .= "Cc: regcc@jonglaria.org".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
 		$headers .= "Content-Type: text/plain; charset=\"utf-8\"".$eol;
 		$headers .= "Content-Transfer-Encoding: 8bit".$eol;
 		$subject = "Tübinger Fröschle - Überweisungsinformationen";
 		$subject = $this->utf8base64encode($subject);
-		$body .= "Hallo ".$this->tdb->getFirstName($id)." ".$this->tdb->getFamilyName($id).",".$eol.$eol;
+		$body .= "Hallo ".$this->tdb->getFirstNameGala($id)." ".$this->tdb->getFamilyNameGala($id).",".$eol.$eol;
 		$body .= "wir freuen uns über deine Anmeldung an dem Adi Pius Kläger Kleinkunstpreis Tübinger Fröschle am 16.9.!".$eol.$eol;
 		$body .= "Um deine Anmeldung zu vervollständigen, überweise bitte den Betrag von".$eol.$eol;
-		$body .= $this->tdb->getCosts($id)." Euro (Betrag für ".$this->tdb->getAge($id)." Jahre alten Teilnehmer)".$eol.$eol;
+		$body .= $this->tdb->getCostsGala($id)." Euro (Betrag für ".$this->tdb->getNumberOfTicketsGala($id)." Ticket(s) mit dem Normalpreis.)".$eol.$eol;
+		$body .= "bzw.".$eol.$eol;
+		$body .= $this->tdb->getCostsGalaReduced($id)." Euro (Betrag für ".$this->tdb->getNumberOfTicketsGala($id)." reduzierte Ticket(s) (Schüler, Studenten, Rentner, etc.) Bitte selbst korrekt ausrechnen falls sowohl normalpreisige als auch reduzierte Tickets benötigt werden.)".$eol.$eol;
 		$body .= "innerhalb von spätestens 10 Tagen auf folgendes Konto:".$eol.$eol;
 		$body .= "Empfänger: Jonglaria e.V.".$eol;
 		$body .= "Konto: DE15 6415 0020 0001 1490 32".$eol;
-		$body .= "Betrag: ".$this->tdb->getCostsGala($id)." EUR".$eol;
+		$body .= "Betrag: ".$this->tdb->getCostsGala($id)." EUR (bzw. red. ".$this->tdb->getCostsGalaReduced($id)." EUR, s.o.)".$eol;
 		$body .= "Betreff: \"FROESCHLE ".$paycode."\"".$eol.$eol;
-		$body .= "Sobald wir den Eingang des Geldes festgestellt haben, schicken wir dir ein elektronisches Ticket, was du ausdrucken und zur Convention mitbringen kannst.".$eol.$eol;
+		$body .= "Sobald wir den Eingang des Geldes festgestellt haben, schicken wir dir ein elektronisches Ticket, was du ausdrucken und zum Kleinkunstpreis mitbringen kannst.".$eol.$eol;
 		$body .= "Wir freuen uns auf dich,".$eol.$eol;
 		$body .= "i.A. Jonglaria e.V.".$eol;
 		return mail($mail_address,$subject,$body,$headers, "-f registration@jonglaria.org");
@@ -186,14 +188,9 @@ class Ticket
 	{
 		# Todo multiple return values?
 		$exec_string = "cd /is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/dynamic && LD_LIBRARY_PATH=$(pwd):\$LD_LIBRARY_PATH ./example1";
-		$exec_string .= " -1\"".$this->tdb->getFirstName($id)."\"";	
-		$exec_string .= " -2\"".$this->tdb->getFamilyName($id)."\"";
-		$exec_string .= " -b\"".$this->tdb->getBirthDate($id)."\"";
-		$supervisor = $this->tdb->getSuperVisor($id);
-		if($supervisor != "")
-		{
-			$exec_string .= " -s\"".$supervisor."\"";
-		}
+		$exec_string .= " -1\"".$this->tdb->getFirstNameGala($id)."\"";	
+		$exec_string .= " -2\"".$this->tdb->getFamilyNameGala($id)."\"";
+		$exec_string .= " -b\"".$this->tdb->getBirthDateGala($id)."\"";
 		$exec_string .= " -i\"http://jonglaria.org/reg/".$this->createUniqueIdentifier($id)."\"";
 		$exec_string .= " -g";
 		$exec_string .= " | TEMP=. gs";
@@ -270,7 +267,7 @@ class Ticket
 
 		$ticketAttachment = chunk_split(base64_encode($ticket));
 		$eol = "\r\n";
-		$headers = "From: \"Tübinger Fröschle\" <registration@jonglaria.org>".$eol;
+		$headers = "From: \"".$this->utf8base64encode("Tübinger Fröschle")."\" <registration@jonglaria.org>".$eol;
 		$headers .= "Cc: regcc@jonglaria.org".$eol;
 		$headers .= "MIME-Version: 1.0".$eol;
 		$headers .= "Content-Type: multipart/mixed; boundary=\"".$separator."\"".$eol;
@@ -280,7 +277,7 @@ class Ticket
 		$body = "--" . $separator . $eol;
 		$body .= "Content-Type: text/plain; charset=\"utf-8\"".$eol;
 		$body .= "Content-Transfer-Encoding: 8bit".$eol.$eol;
-		$body .= "Hallo ".$this->tdb->getFirstName($id)." ".$this->tdb->getFamilyName($id).",".$eol.$eol;
+		$body .= "Hallo ".$this->tdb->getFirstNameGala($id)." ".$this->tdb->getFamilyNameGala($id).",".$eol.$eol;
 		$body .= "wir freuen uns über deine Anmeldung an dem Adi Pius Kläger Kleinkunstpreis Tübinger Fröschle am 16.9.!".$eol.$eol;
 		$body .= "Im Anhang findest du ein elektronisches Ticket was du bitte zum Kleinkunstpreis ausgedruckt mitbringst.".$eol.$eol;
 		$body .= "Wir freuen uns auf dich,".$eol.$eol;
@@ -295,7 +292,7 @@ class Ticket
 		$body .= $ticketAttachment.$eol;
 		$body .= "--" . $separator . "--";
 		# Todo Zusatztext für Minderjährige
-		return mail($this->tdb->getEmail($id),$subject,$body,$headers, "-f registration@jonglaria.org");
+		return mail($this->tdb->getEmailGala($id),$subject,$body,$headers, "-f registration@jonglaria.org");
 		// file_put_contents("work.pdf", $ticketAttachment);
 
 	}
