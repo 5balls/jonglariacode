@@ -23,21 +23,31 @@ class UserData
 	private $userName;
 	private $dataObjects = array();
 	# Creates a new object:
-	function __construct($fn, $un){
+	public function __construct($fn, $un){
 		$this->fileName = $fn;
 		$this->userName = $un;
 	}
-	# Constructs from file:
-	#public function __construct($fileName){
-		# TODO
-	#}
+	# Reads from file:
+
+	public function readDataHelper($fileHandler, $fileName, $args){
+		$encoded_data = fread($fileHandler, filesize($fileName));
+		$decoded_data = json_decode($encoded_data, true);
+		$this->userName = $decoded_data["userName"];
+		foreach($decoded_data["data"] as $decoded_datum){
+			$this->addDataObject($decoded_datum["objectName"], $decoded_datum["expires"], $decoded_datum["reasonForStoring"], $decoded_datum["dataContent"]);
+		}
+
+	}
+	public function fillFromFile(){
+		$atomicHandler = new AtomicFile();
+		$atomicHandler->atomicReadAction($this->fileName, $this, "readDataHelper", "test");
+	}
 	public function storeDataHelper($fileHandler, $fileName, $args){
 		$encoded_data = json_encode(array("userName" => $this->userName, "data" => $this->dataObjects));	
 		fwrite($fileHandler, $encoded_data);
 	}
 	public function storeData(){
 		$atomicHandler = new AtomicFile();
-print "<h1>".$this->fileName."</h1>";
 		return $atomicHandler->atomicWriteAction($this->fileName, $this, "storeDataHelper", "test");
 	}
 	public function addDataObject($objectName, $expires, $reasonForStoring, $content){
