@@ -8,11 +8,13 @@ class Data
 	public $expires;
 	public $reasonForStoring;
 	public $dataContent;
-	public function __construct($objectName, $expires, $reasonForStoring, $dataContent){
+	public $accessGroups;
+	public function __construct($objectName, $expires, $reasonForStoring, $dataContent, $accessGroups){
 		$this->objectName = $objectName;
 		$this->expires = $expires;
 		$this->reasonForStoring = $reasonForStoring;
 		$this->dataContent = $dataContent;
+		$this->accessGroups = $accessGroups;
 	}
 }
 
@@ -34,7 +36,7 @@ class UserData
 		$decoded_data = json_decode($encoded_data, true);
 		$this->userName = $decoded_data["userName"];
 		foreach($decoded_data["data"] as $decoded_datum){
-			$this->addDataObject($decoded_datum["objectName"], $decoded_datum["expires"], $decoded_datum["reasonForStoring"], $decoded_datum["dataContent"]);
+			$this->addDataObject($decoded_datum["objectName"], $decoded_datum["expires"], $decoded_datum["reasonForStoring"], $decoded_datum["dataContent"], $decoded_datum["accessGroups"]);
 		}
 
 	}
@@ -50,8 +52,8 @@ class UserData
 		$atomicHandler = new AtomicFile();
 		return $atomicHandler->atomicWriteAction($this->fileName, $this, "storeDataHelper", "test");
 	}
-	public function addDataObject($objectName, $expires, $reasonForStoring, $content){
-		$newDataObject = new Data($objectName, $expires, $reasonForStoring, $content);
+	public function addDataObject($objectName, $expires, $reasonForStoring, $content, $access){
+		$newDataObject = new Data($objectName, $expires, $reasonForStoring, $content, $access);
 		return array_push($this->dataObjects, $newDataObject);
 	}
 	public function getDataObject($objectName){
