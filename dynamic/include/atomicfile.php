@@ -5,7 +5,7 @@ namespace Jonglaria;
 
 class AtomicFile
 {
-	# From http;//php.net/manual/en/function.flock.php
+	# From http://php.net/manual/en/function.flock.php
 	public function atomicAttach($fileName, $data){
 		$fileHandler = fopen($fileName, "a+");
 		if(flock($fileHandler, LOCK_EX)){
@@ -61,7 +61,9 @@ class AtomicFile
 				# Empty line (happens for last line break too):
 				if($fileContentLine=="") continue;
 				# Parse line in the style of "username:password"
-				[$currentUserName, $currentPassword] = explode(':', $fileContentLine);
+				$currentLineElement = explode(':', $fileContentLine);
+                                $currentUserName = $currentLineElement[0];
+                                $currentPassword = $currentLineElement[1];
 				# See if user exists already
 				if($currentUserName==$userName){
 					# User matched line in our user file
