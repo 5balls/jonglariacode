@@ -29,8 +29,6 @@ class PersonalData extends Form{
         return $this->vs_regperson;
     }
 
-    public function validate_birthdate($val){
-    }
 }
 
 
