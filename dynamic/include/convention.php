@@ -1,8 +1,61 @@
 <?php
 namespace Jonglaria;
 
-include "form.php";
-include "userdata.php";
+require_once("form.php");
+require_once("userdata.php");
+require_once("auth.php");
+
+class AuthData extends Form{
+    private $vs_accountname;
+    private $username;
+    private $password;
+    public function validate_email($val){
+        return filter_var($val, FILTER_VALIDATE_EMAIL);
+    }
+    public function validationstring_email($val){
+        return "Emailadresse ungültig: ";
+    }
+    public function validate_password($val){
+        $this->password = $val;
+        return !($val == '');
+    }
+    public function validationstring_password($val){
+        return "Passwort darf nicht leer sein: ";
+    }
+    public function checkboxes_checked(){
+        return array('confirmdata');
+    }
+    public function validationstring_confirmdata(){
+        return "Wir benötigen diese Bestätigung um fortzufahren: ";
+    }
+    public function validate_accountname($val){
+        $this->username = $val;
+        if(!(preg_match("@^[a-zA-Z0-9_]+$@",$val) === 1)){
+            $this->vs_accountname = "Accountname ungültig (nur die Zeichen a-z, A-Z, 0-9 und _ sind erlaubt): ";
+            return false;
+        }
+        if(file_exists('/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/userdata/'.$val)){
+            $this->vs_accountname = "Accountname ist schon belegt, bitte anderen wählen!: ";
+            return false;
+        }
+        return true;
+    }
+    public function validationstring_accountname($vals){
+        return $this->vs_accountname;
+    }
+    public function beforestorage(){
+        try{
+            $auth = new Authorization('/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/convention/access/.htusers', '/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/convention/access/.htgroups');
+            $auth->addUser($this->username, $this->password);
+            $auth->addUserToGroup($this->username, 'con18_reg');
+        } catch(Exception $exception){
+            $GLOBALS['exception'] = $exception;
+            return false;
+        }
+        return true;
+    }
+
+}
 
 class PersonalData extends Form{
     private $vs_regperson = array();
@@ -27,6 +80,20 @@ class PersonalData extends Form{
     }
     public function validationstring_regperson($vals){
         return $this->vs_regperson;
+    }
+    public function checkboxes_checked(){
+        return array('confirmdata');
+    }
+    public function validationstring_confirmdata(){
+        return "Wir benötigen diese Bestätigung um fortzufahren: ";
+    }
+}
+
+class SupervisorData extends Form{
+
+    public function check_precondition(){
+        $GLOBALS['minor'] = true;
+        return true;
     }
 
 }

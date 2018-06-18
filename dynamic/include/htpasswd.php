@@ -1,7 +1,7 @@
 <?php
 # Class for managing htpasswd file
 namespace Jonglaria;
-include "atomicfile.php";
+require_once("atomicfile.php");
 
 class HtPasswdFile
 {
@@ -12,7 +12,9 @@ class HtPasswdFile
 			# Empty line (happens for last line break too):
 			if($fileContentLine=="") continue;
 			# Parse line in the style of "username:password"
-			[$currentUserName, $currentPassword] = explode(':', $fileContentLine);
+                        $userAndPassword = explode(':', $fileContentLine);
+			$currentUserName = $userAndPassword[0];
+                        $currentPassword = $userAndPassword[1];
 			# See if user exists already
 			if($currentUserName==$user){
 				# User matched line in our user file
@@ -55,7 +57,9 @@ class HtPasswdFile
 			# Empty line (happens for last line break too):
 			if($fileContentLine=="") continue;
 			# Parse line in the style of "username:password"
-			[$currentUserName, $currentPassword] = explode(':', $fileContentLine);
+                        $userAndPassword = explode(':', $fileContentLine);
+			$currentUserName = $userAndPassword[0];
+                        $currentPassword = $userAndPassword[1];
 			# Add user if not the one which shall be removed
 			if(strcmp($currentUserName, $user) !== 0){
 				$newFileContent .= $fileContentLine . "\n";
@@ -89,7 +93,9 @@ class HtPasswdFile
 			# Empty line (happens for last line break too):
 			if($fileContentLine=="") continue;
 			# Parse line in the style of "username:password"
-			[$currentUserName, $currentPassword] = explode(':', $fileContentLine);
+                        $userAndPassword = explode(':', $fileContentLine);
+			$currentUserName = $userAndPassword[0];
+                        $currentPassword = $userAndPassword[1];
 			# Add user if not the one which shall be removed
 			if(strcmp($currentUserName, $userName) !== 0){
 				$newFileContent .= $fileContentLine . "\n";

@@ -21,11 +21,14 @@ class Data
 # Manages User data in JSON files in a seperate directory
 class UserData 
 {
+        private $pathName;
 	private $fileName;
 	private $userName;
 	private $dataObjects = array();
 	# Creates a new object:
 	public function __construct($fn, $un){
+                #$this->pathName = $pn."/".$un."/";
+# TODO Create dir
 		$this->fileName = $fn;
 		$this->userName = $un;
 	}
@@ -56,6 +59,9 @@ class UserData
 		$newDataObject = new Data($objectName, $expires, $reasonForStoring, $content, $access);
 		return array_push($this->dataObjects, $newDataObject);
 	}
+        public function addDataObjectD($dataobject){
+            return array_push($this->dataObjects, $dataobject);
+        }
 	public function getDataObject($objectName){
 		foreach ($this->dataObjects as $dataObject)
 		{
