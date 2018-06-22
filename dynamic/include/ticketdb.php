@@ -1,10 +1,9 @@
 <?php
 # Class for accesing the ticket database in a more abstract way
+# This is a rewrite to make it filebased this year
 namespace Jonglaria;
 
-require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/config/mexicon/config.php");
-require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglaria/mexicon/inc/database.inc.php");
-require_once("/is/htdocs/wp1110266_HJD5OK7U68/jonglaria/mexicon/inc/getAge.inc.php");
+require_once("conventionhelpers.php");
 
 class TicketDatabase
 {
@@ -14,9 +13,10 @@ class TicketDatabase
 	private $id_info_gala;
 	private $db = null;
 	private $caregiver;
+        private $age;
 	public function __construct()
 	{
-		$this->db = new \Database("db1110266-jonglaria");
+
 	}
 	private function refreshInformation($id)
 	{

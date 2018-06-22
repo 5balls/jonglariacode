@@ -4,6 +4,7 @@ namespace Jonglaria;
 require_once("form.php");
 require_once("userdata.php");
 require_once("auth.php");
+require_once("conventionhelpers.php");
 
 class AuthData extends Form{
     private $vs_accountname;
@@ -81,19 +82,41 @@ class PersonalData extends Form{
     public function validationstring_regperson($vals){
         return $this->vs_regperson;
     }
-    public function checkboxes_checked(){
-        return array('confirmdata');
-    }
-    public function validationstring_confirmdata(){
-        return "Wir benötigen diese Bestätigung um fortzufahren: ";
-    }
 }
 
 class SupervisorData extends Form{
-
+    private $username;
+    private $filename_personaldata;
+    private $role;
+    private $supervisorerror;
     public function check_precondition(){
-        $GLOBALS['minor'] = true;
+        $age = new Age();
+        if($age->couldreaddata){
+            if($age->ageConvention < 18){
+                $GLOBALS['minor'] = true;
+                $this->role = 'minor';
+            }
+        }
+        else{
+            $GLOBALS['datanotentered'] = true;
+            return false;
+        }
         return true;
+    }
+    public function validate_supervisoraccountname($val){
+        if(strcmp($val, $_SERVER['PHP_AUTH_USER'])==0){
+            $this->supervisorerror = "Das ist dein eigener Accountname. Hier den Accountnamen der Betreuungsperson eingeben (diese fragen!): ";
+            return false;
+        }
+
+        if(!file_exists('/is/htdocs/wp1110266_HJD5OK7U68/jonglariahidden/userdata/'.$val)){
+            $this->supervisorerror = "\"".$val."\" ist noch nicht vergeben, bitte nochmal Schreibweise überprüfen: ";
+            return false;
+        }
+        return true;
+    }
+    public function validationstring_supervisoraccountname($val){
+        return $this->supervisorerror;
     }
 
 }
