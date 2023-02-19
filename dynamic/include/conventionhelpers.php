@@ -1,6 +1,6 @@
 <?php
 namespace Jonglaria;
-require_once("congig.php");
+require_once("config.php");
 require_once("userdata.php");
 
 function calculateConventionPrice($age, $preregperiod){

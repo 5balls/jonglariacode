@@ -11,6 +11,12 @@ class AuthData extends Form{
     private $vs_accountname;
     private $username;
     private $password;
+    public function validate_email($val){
+        return filter_var($val, FILTER_VALIDATE_EMAIL);
+    }
+    public function validationstring_email($val){
+        return "Emailadresse ungültig: ";
+    }
     public function validate_password($val){
         $this->password = $val;
         return !($val == '');
@@ -245,6 +251,7 @@ class PersonalData extends Form{
     }
 }
 */
+
 class SupervisorData extends Form{
     private $username;
     private $filename_personaldata;
