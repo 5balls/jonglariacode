@@ -1,0 +1,39 @@
+; Configuration file for jonglaria code
+; The filled out config.ini should never be checked into git or be public
+
+[basic]
+base_path = "/var/www/example.com/hidden"
+dynamic_path = "${base_path}/dynamic"
+userdata_path = "${base_path}/userdata"
+club_name = ""
+iban = ""
+
+[convention]
+convention_path = "${base_path}/convention"
+convention_auth_path = "${convention_path}/access"
+convention_auth_participants_group = ""
+convention_order_salt = ""
+convention_start_date = ""
+convention_show_date = ""
+convention_email_from = ""
+convention_name_with_dates = ""
+
+[show]
+show_path = "${base_path}/showdata"
+show_email_from = ""
+show_email_subject = ""
+show_email_body_thanks = ""
+
+[statistics]
+statistics_age_detail_file = ""
+statistics_age_file = ""
+
+[tickets]
+tickets_salt = ""
+tickets_config_salt = ""
+tickets_payment_salt = ""
+
+[database]
+database_dsn = "mysql:host=localhost;dbname=convention"
+database_user = ""
+database_password = ""
