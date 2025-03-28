@@ -265,7 +265,7 @@ class SupervisorData extends Form{
                 $this->role = 'minor';
             }
             else{
-                $collectsupervisorinfo = new CollectedUserData($this->cfg['userdata_path', 'supervisor.json');
+                $collectsupervisorinfo = new CollectedUserData($this->cfg['userdata_path'].'/supervisor.json');
                 foreach($collectsupervisorinfo->userData as $child => $childvals){
                     if(strcmp($childvals->getDataObject('supervisoraccountname')->dataContent, $_SERVER['PHP_AUTH_USER']) == 0){
                         $childdata = new UserDataCU('personaldata',$child);

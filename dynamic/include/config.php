@@ -5,7 +5,7 @@ class Config implements \ArrayAccess{
     private $ini;
     public function __construct($ini_file = 'config.ini')
     {
-        $ini = parser_ini_file($ini_file);
+        $ini = parse_ini_file($ini_file);
     }
     public function offsetSet($offset, $value){
         # TODO Currently only for reading
