@@ -208,14 +208,22 @@ class Form
 		$this->storagestring_formdata[$inputkey] = json_encode(array($inputkey => $sinputval));
 	    }
 	}
-        # Checkboxes need to be treated specially, as there is only
-        # data transmitted, if an option is checked. The user defined
+        # Checkboxes (and buttons) need to be treated specially,
+        # as there is only data transmitted, if an option is checked.
+        #
+        # ATTENTION: The following two functions checkboxes_checked
+        # and checkboxes_unchecked should not be used anymore!
+        # Please use the function checkboxes_button_expectations
+        # instead which completely replaces those!
+        #
+        # The user defined
         # function "checkboxes_checked" returns an array of those
         # checkboxes which are expected to be checked:
         if(is_callable(array($this, 'checkboxes_checked'))){
             $checkboxes = call_user_func(array($this,'checkboxes_checked'));
             foreach($checkboxes as $checkbox){
                 $this->valid_formdata[$checkbox] = isset($this->sanitized_formdata[$checkbox]);
+
                 # Only fill validation string in case
                 # of validation failure:
                 if($this->valid_formdata[$checkbox] !== true){
@@ -241,7 +249,61 @@ class Form
                 }
             }
         }
-
+	# More generic function intended to replace checkboxes_checked
+	# and checkboxes_unchecked
+	if(is_callable(array($this, 'checkboxes_button_expectations'))){
+            $checkbox_expectations = call_user_func(array($this,'checkboxes_button_expectations'));
+            foreach($checkbox_expectations as $key => $value){
+                if(is_array($value)){
+                    $this->valid_formdata[$key] = array();
+                    foreach($value as $subkey => $value2)
+                    {
+                        $ischecked = isset($this->sanitized_formdata[$key][$subkey]);
+                        switch($value2){
+                        case 'checked':
+                            $this->valid_formdata[$key][$subkey] = $ischecked;
+                            break;
+                        case 'unchecked':
+                            $this->valid_formdata[$key][$subkey] = !$ischecked;
+                            break;
+                        case 'dontcare':
+                            $this->valid_formdata[$key][$subkey] = true;
+                            break;
+                        }
+                        # Only fill validation string in case
+                        # of validation failure:
+                        if($this->valid_formdata[$key][$subkey] !== true){
+                            $valstr_fun = "validationstring_" . $key;
+                            if(is_callable(array($this, $valstr_fun))){
+                                $this->validstring_formdata[$key] = call_user_func(array($this,$valstr_fun));
+                            }
+                        }
+                    }
+                }
+                else{
+                    $ischecked = isset($this->sanitized_formdata[$key]);
+                    switch($value){
+                    case 'checked':
+                        $this->valid_formdata[$key] = $ischecked;
+                        break;
+                    case 'unchecked':
+                        $this->valid_formdata[$key] = !$ischecked;
+                        break;
+                    case 'dontcare':
+                        $this->valid_formdata[$key] = true;
+                        break;
+                    }
+                    # Only fill validation string in case
+                    # of validation failure:
+                    if($this->valid_formdata[$key] !== true){
+                        $valstr_fun = "validationstring_" . $key;
+                        if(is_callable(array($this, $valstr_fun))){
+                            $this->validstring_formdata[$key] = call_user_func(array($this,$valstr_fun));
+                        }
+                    }
+                }
+            }
+	}
     }
     private function sanitize_generic($inputval){
         if(is_array($inputval)){
