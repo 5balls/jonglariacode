@@ -91,6 +91,7 @@ class UserDataSQL extends UserData {
 		$this->dataBaseTable = pathinfo($this->fileName)['filename'];
 		try {
 			if(is_null(self::$dbconn)){
+                            
 				self::$dbconn = new \PDO($this->cfg['database_dsn'], $this->cfg['database_user'], $this->cfg['database_password']);
 				self::$dbconn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION); 
 			}
@@ -105,7 +106,7 @@ class UserDataSQL extends UserData {
 		//$this->dbconn = NULL;
 	}
 	public function fillFromFile(){
-		$sql_string = "SELECT data FROM convention.".$this->dataBaseTable." WHERE username ='". $this->userName . "'";
+		$sql_string = "SELECT data FROM jonglaria.".$this->dataBaseTable." WHERE username ='". $this->userName . "'";
 		try {
 			$fillquery = self::$dbconn->query($sql_string);
 			foreach($fillquery as $encoded_data)
@@ -127,16 +128,16 @@ class UserDataSQL extends UserData {
 	public function storeData(){
 		$encoded_data = json_encode(array("userName" => $this->userName, "data" => $this->dataObjects), JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);	
 		# Check if we need to update dataset or insert new dataset
-		$sql_string = "SELECT COUNT(*) FROM convention.".$this->dataBaseTable." WHERE username ='". $this->userName . "'";
+		$sql_string = "SELECT COUNT(*) FROM jonglaria.".$this->dataBaseTable." WHERE username ='". $this->userName . "'";
 		try {
 		    $result = self::$dbconn->query($sql_string);
 
 			if($result->fetchColumn()>0){
-			    $sql_string = "UPDATE convention.".$this->dataBaseTable." SET data='". $encoded_data . "' WHERE username='". $this->userName . "'";
+			    $sql_string = "UPDATE jonglaria.".$this->dataBaseTable." SET data='". $encoded_data . "' WHERE username='". $this->userName . "'";
 
 			}
 			else{
-			    $sql_string = "INSERT INTO convention.".$this->dataBaseTable." (username, data) values ('". $this->userName . "', '". $encoded_data . "')";
+			    $sql_string = "INSERT INTO jonglaria.".$this->dataBaseTable." (username, data) values ('". $this->userName . "', '". $encoded_data . "')";
 			}
 		}
 		catch(PDOException $e)
@@ -154,12 +155,12 @@ class UserDataSQL extends UserData {
 		}
 	}
 	public function getTableList(){
-		$sql_string = "show tables in convention";
+		$sql_string = "show tables in jonglaria";
 		$tables_array = array();
 		try {
 			foreach(self::$dbconn->query($sql_string) as $row)
 			{
-				$tables_array[] = $row["Tables_in_convention"];
+				$tables_array[] = $row["Tables_in_jonglaria"];
 			}
 
 		}
@@ -200,7 +201,7 @@ class CollectedUserDataSQL{
             error_log("MySQL connection failed: " . $e->getMessage(), 0);
 	    print("MySQL connection failed: " . $e->getMessage());
         }
-        $sql_string = "SELECT username FROM convention.".$filename;
+        $sql_string = "SELECT username FROM jonglaria.".$filename;
         try {
             $users_qr = $this->dbconn->query($sql_string);
         } 
